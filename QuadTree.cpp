@@ -126,28 +126,35 @@ typedef struct knnNode {
 
 double QuadTreeNode::minSqrDist(array<float, 4> r) const {
     auto b = this->box;
-    bool left = r[2] < b[XLOW];
-    bool right = b[XHIGH] < r[0];
-    bool bottom = r[3] < b[YLOW];
-    bool top = b[YHIGH] < r[1];
+    bool left = r[XHIGH] < b[XLOW];
+    bool right = b[XHIGH] < r[XLOW];
+    bool bottom = r[YHIGH] < b[YLOW];
+    bool top = b[YHIGH] < r[YLOW];
     if (top) {
         if (left)
-            return dist(b[XLOW], b[YHIGH], r[2], r[1]);
+        // corner distance
+            return dist(b[XLOW], b[YHIGH], r[XHIGH], r[YLOW]);
         if (right)
-            return dist(b[XHIGH], b[YHIGH], r[0], r[1]);
-        return (r[1] - b[YHIGH]) * (r[1] - b[YHIGH]);
+        // corner distance
+
+            return dist(b[XHIGH], b[YHIGH], r[XLOW], r[YLOW]);
+        // edge distance
+        return (r[YLOW] - b[YHIGH]) * (r[YLOW] - b[YHIGH]);
     }
     if (bottom) {
         if (left)
-            return dist(b[XLOW], b[YLOW], r[2], r[3]);
+            return dist(b[XLOW], b[YLOW], r[XHIGH], r[YHIGH]);
         if (right)
-            return dist(b[XHIGH], b[YLOW], r[0], r[3]);
-        return (b[YLOW] - r[3]) * (b[YLOW] - r[3]);
+            return dist(b[XHIGH], b[YLOW], r[XLOW], r[YHIGH]);
+        return (b[YLOW] - r[YHIGH]) * (b[YLOW] - r[YHIGH]);
     }
     if (left)
-        return (b[XLOW] - r[2]) * (b[XLOW] - r[2]);
+        // edge distance
+        return (b[XLOW] - r[XHIGH]) * (b[XLOW] - r[XHIGH]);
     if (right)
-        return (r[0] - b[XHIGH]) * (r[0] - b[XHIGH]);
+        // edge distance
+        return (r[XLOW] - b[XHIGH]) * (r[XLOW] - b[XHIGH]);
+    // intersects
     return 0;
 }
 
@@ -168,6 +175,7 @@ void QuadTreeNode::kNNQuery(array<float, 2> q, map<string, double> &stats, int k
         node = unseenNodes.top().sn;
         dist = unseenNodes.top().dist;
         unseenNodes.pop();
+        // top() returns the largest value
         minDist = knnPts.top().dist;
         if (dist < minDist) {
             if (node->isLeaf()) {
