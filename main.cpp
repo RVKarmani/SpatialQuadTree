@@ -26,7 +26,7 @@ int main(int argc, char **argv){
     double time = duration_cast<microseconds>(high_resolution_clock::now() - startTime).count();
     cout << "Index creation time: " << time << endl;
 
-    map<string, double> rangeLog, knnLog, inLog;
+    map<string, double> rangeLog, pointLog, knnLog, inLog;
     for (auto q: queries){
         if (q.type == 'r') {
             vector<float> results;
@@ -40,6 +40,19 @@ int main(int argc, char **argv){
             rangeLog["nodes " + to_string(q.id)] += stats["leaf"] + stats["directory"];
             rangeLog["leaf " + to_string(q.id)] += stats["leaf"];
             rangeLog["directories " + to_string(q.id)] += stats["directory"];
+        }
+        else if (q.type == 'p') {
+            float result;
+            map<string, double> stats;
+            startTime = high_resolution_clock::now();
+            tree->pointQuery(q, result, stats);
+            //cout << "results count: " << results.size() << endl;
+            pointLog["time " + to_string(q.id)] += duration_cast<microseconds>(
+                    high_resolution_clock::now() - startTime).count();
+            pointLog["count " + to_string(q.id)]++;
+            pointLog["nodes " + to_string(q.id)] += stats["leaf"] + stats["directory"];
+            pointLog["leaf " + to_string(q.id)] += stats["leaf"];
+            pointLog["directories " + to_string(q.id)] += stats["directory"];
         }
         else if (q.type == 'k') {
             map<string, double> stats;
@@ -67,6 +80,11 @@ int main(int argc, char **argv){
 			}
     		cout << "---Range---" << endl;
     		for (auto it = rangeLog.begin(); it != rangeLog.end(); ++it){
+        		cout<< it->first << ": " << it->second << endl;
+        		it->second = 0;
+        	}
+            cout << "---Point---" << endl;
+    		for (auto it = pointLog.begin(); it != pointLog.end(); ++it){
         		cout<< it->first << ": " << it->second << endl;
         		it->second = 0;
         	}

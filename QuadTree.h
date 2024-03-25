@@ -18,6 +18,7 @@ public :
     void insert(Record);
     bool intersects(Record r);
     void rangeQuery(Record q, vector<float> &results, map<string, double> &map);
+    void pointQuery(Record q, float &result, map<string, double> &map);
     void kNNQuery(array<float, 2> p, map<string, double> &stats, int k);
     void deleteTree();
     void calculateSize(int &);

@@ -111,6 +111,27 @@ void QuadTreeNode::rangeQuery(Record q, vector<float> &resultItemsIds, map<strin
     }
 }
 
+void QuadTreeNode::pointQuery(Record q, float &resultItemId, map<string, double> &stats) {
+    if (isLeaf()) {
+        if (intersects(q)) {
+            stats["leaf"]++;
+            for (auto r : data) {
+                if (q.samePosition(r)) {
+                    cout << "Found Point: " << r.id << " " << r.box[XLOW] << " " << r.box[YLOW] << endl;
+                    resultItemId = r.id;
+                }
+            }
+        }
+        return;
+    } else {
+        stats["directory"]++;
+        for (auto c : children) {
+            if (c->intersects(q))
+                c->pointQuery(q, resultItemId, stats);
+        }
+    }
+}
+
 typedef struct knnPoint {
     array<float, 2> pt;
     double dist = FLT_MAX;

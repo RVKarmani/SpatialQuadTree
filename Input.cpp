@@ -22,6 +22,10 @@ bool Record::intersects(Record r) {
              box[YLOW] > r.box[YHIGH] || box[YHIGH] < r.box[YLOW]);
 }
 
+bool Record::samePosition(Record r) {
+    return box[0] == r.box[0] && box[1] == r.box[1];
+}
+
 bool Record::operator<(const Record &b) const {
     if (box[XLOW] != b.box[XLOW])
         return box[XLOW] < b.box[XLOW];

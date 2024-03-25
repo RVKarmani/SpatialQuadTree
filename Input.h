@@ -21,6 +21,7 @@ public:
     ~Record();
 
     bool intersects(Record r);
+    bool samePosition(Record r);
 };
 
 class Input : public vector<Record>
