@@ -1,3 +1,6 @@
 .git
 *.out
 .vscode
+*.exe
+\build
+*.txt
