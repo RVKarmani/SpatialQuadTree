@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 
 # File loading
-filename = "dataExample.txt"  # Replace with the actual name of your file
+filename = "data.txt"  # Replace with the actual name of your file
 with open(filename, 'r') as file:
     data = file.read()
 # filename = "dataExample.txt"  # Replace with the actual name of your file
