@@ -28,7 +28,8 @@ int main(int argc, char **argv){
     queries.loadQueries(argv[3]);
 
     high_resolution_clock::time_point startTime = high_resolution_clock::now();
-    QuadTreeNode* tree = new QuadTreeNode(boundary, 0);
+    QuadTree *tree = new QuadTree(boundary, 0);
+    // QuadTreeNode* tree = new QuadTreeNode(boundary, 0);
     tree->packing(dataset);
     double time = duration_cast<microseconds>(high_resolution_clock::now() - startTime).count();
     cout << "Index creation time: " << time << endl;
