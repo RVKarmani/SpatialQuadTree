@@ -34,7 +34,8 @@ def bezier_curve(p0, p1, c0, c1, t):
 
 # Generate points on the curve
 # Number of points
-t_values = np.linspace(0, 1, 150)
+NUM_POINTS = 150
+t_values = np.linspace(0, 1, NUM_POINTS)
 curve_points = [bezier_curve(p0, p1, c0, c1, t) for t in t_values]
 
 print("Generating data for quadtree")
@@ -45,12 +46,13 @@ with open('data.txt', 'w') as f:
         print(f"{idx + 1} - {coordinate}")
 
 print("Generating queries for quadtree")
-query_choices = ['i', 'q']
+# query_choices = ['i', 'q']
 
 with open('queries.txt', 'w') as f:
-    # Use first 100 values for building the path, rest for queries
+    # Use first 100 values for building the path, use rest for inserts 
     for coordinate in curve_points[100:]:
-        f.write("{} {} {}\n".format(random.choice(query_choices), coordinate[0], coordinate[1]))
+        # f.write("{} {} {}\n".format(random.choice(query_choices), coordinate[0], coordinate[1]))
+        f.write("{} {} {}\n".format('i', coordinate[0], coordinate[1]))
             
 # curve_x, curve_y = zip(*curve_points)
 # print(f"Curve X: {curve_x}")
