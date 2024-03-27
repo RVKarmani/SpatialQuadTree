@@ -37,25 +37,25 @@ int main(int argc, char **argv){
     {
         map<string, double> bulkInsertLog;
 
-        // if (ONLY_INSERT_STRICT) {
-        //     bool all_i = true;
-        //     for (auto q: queries) {
-        //         if (q.type != 'i') {
-        //             all_i = false;
-        //             cout << "Exsisting type: " << q.type << "\n";
-        //             break;
-        //         }
-        //     }
-        //     if (all_i == false) {
-        //         return 1;
-        //     }
-        // }
-        // else {
-        //     // remove if q.type != 'i'
-        //     queries.erase(std::remove_if(queries.begin(), queries.end(), [](const Record& q) {
-        //         return q.type != 'i';
-        //     }), queries.end());
-        // }       
+        if (ONLY_INSERT_STRICT) {
+            bool all_i = true;
+            for (auto q: queries) {
+                if (q.type != 'i') {
+                    all_i = false;
+                    cout << "Exsisting type: " << q.type << "\n";
+                    break;
+                }
+            }
+            if (all_i == false) {
+                return 1;
+            }
+        }
+        else {
+            // remove if q.type != 'i'
+            queries.erase(std::remove_if(queries.begin(), queries.end(), [](const Record& q) {
+                return q.type != 'i';
+            }), queries.end());
+        }       
        
         startTime = high_resolution_clock::now();
         
