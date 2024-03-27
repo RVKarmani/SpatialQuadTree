@@ -59,13 +59,6 @@ void QuadTreeNode::insert(Record r) {
     }
 }
 
-void QuadTreeNode::bulkInsert(Input queries, map<string, double> &log) {
-    for (auto q: queries) {
-        this->insert(q);
-    }
-}
-
-
 void QuadTreeNode::divide() {
 
     float xMid, yMid;
@@ -319,3 +312,11 @@ void QuadTreeNode::getStatistics() {
 }
 
 QuadTreeNode::~QuadTreeNode() {}
+
+void QuadTree::bulkInsert(Input queries, map<string, double> &log)
+{
+    for (auto q : queries)
+    {
+        this->root->insert(q);
+    }
+}

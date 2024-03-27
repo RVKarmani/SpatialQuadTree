@@ -45,17 +45,17 @@ with open('data.txt', 'w') as f:
         print(f"{idx + 1} - {coordinate}")
 
 print("Generating queries for quadtree")
-query_choices = ['i', 'q']
+query_choices = ['i', 'p']
 
 with open('queries.txt', 'w') as f:
     # Use first 100 values for building the path, rest for queries
     for coordinate in curve_points[100:]:
         f.write("{} {} {}\n".format(random.choice(query_choices), coordinate[0], coordinate[1]))
             
-# curve_x, curve_y = zip(*curve_points)
+curve_x, curve_y = zip(*curve_points)
 # print(f"Curve X: {curve_x}")
 # print(f"\nCurve Y: {curve_y}")
-# Plotting
+# # Plotting
 # plt.plot(*zip(p0, c0, c1, p1), 'ro-')  # Plot control points and endpoints
 # plt.plot(curve_x, curve_y, label='Bezier Curve')
 # plt.xlabel('X')
