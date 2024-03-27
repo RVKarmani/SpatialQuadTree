@@ -5,8 +5,9 @@
 using namespace std;
 using namespace std::chrono;
 
-bool ONLY_INSERT = true;
-bool ONLY_INSERT_STRICT = false;
+#define ONLY_INSERT 
+// #define NORMAL_TEST
+const bool ONLY_INSERT_STRICT = false;
 // true: raise error if existing other types
 // false: remove other types
 
@@ -32,8 +33,9 @@ int main(int argc, char **argv){
     double time = duration_cast<microseconds>(high_resolution_clock::now() - startTime).count();
     cout << "Index creation time: " << time << endl;
 
-    map<string, double> bulkInsertLog;
-    if (ONLY_INSERT) {
+    #ifdef ONLY_INSERT
+    {
+        map<string, double> bulkInsertLog;
 
         if (ONLY_INSERT_STRICT) {
             bool all_i = true;
@@ -63,7 +65,9 @@ int main(int argc, char **argv){
 
         return 0;
     }
+    #endif
 
+    #ifdef NORMAL_TEST
     map<string, double> rangeLog, pointLog, knnLog, inLog;
     for (auto q: queries){
         if (q.type == 'r') {
@@ -136,5 +140,6 @@ int main(int argc, char **argv){
     	}
     }
     return 0;
+    #endif
 }
 
