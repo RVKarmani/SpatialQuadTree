@@ -65,6 +65,7 @@ void QuadTreeNode::bulkInsert(Input queries, map<string, double> &log) {
     }
 }
 
+
 void QuadTreeNode::divide() {
 
     float xMid, yMid;
