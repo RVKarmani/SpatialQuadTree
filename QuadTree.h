@@ -16,6 +16,7 @@ public :
 
     QuadTreeNode(vector<float> boundary, int level);
     void insert(Record);
+    void bulkInsert(Input queries, map<string, double> &log);
     bool intersects(Record r);
     void rangeQuery(Record q, vector<float> &results, map<string, double> &map);
     void pointQuery(Record q, float &result, map<string, double> &map);
