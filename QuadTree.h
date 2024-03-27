@@ -15,7 +15,7 @@ public :
     vector<float> box;
 
     QuadTreeNode(vector<float> boundary, int level);
-    void insert(Record);
+    QuadTreeNode *insert(Record);
     void bulkInsert(Input queries, map<string, double> &log);
     bool intersects(Record r);
     void rangeQuery(Record q, vector<float> &results, map<string, double> &map);
@@ -39,8 +39,8 @@ class QuadTree{
 public:
     QuadTreeNode * root;
     QuadTree(vector<float> boundary, int level) { root = new QuadTreeNode(boundary, 0); };
-    void insert(Record r) { return root->insert(r); };
-    void bulkInsert(Input queries, map<string, double> &log) { return root->bulkInsert(queries, log); };
+    QuadTreeNode *insert(Record r) { return root->insert(r); };
+    void bulkInsert(Input queries, map<string, double> &log, int method);
     bool intersects(Record r){ return root->intersects(r);};
     void rangeQuery(Record q, vector<float> &results, map<string, double> &map) { return root->rangeQuery(q, results, map); };
     void pointQuery(Record q, float &result, map<string, double> &map) { return root->pointQuery(q, result, map); };

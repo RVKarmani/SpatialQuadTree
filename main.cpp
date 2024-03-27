@@ -60,10 +60,10 @@ int main(int argc, char **argv){
        
         startTime = high_resolution_clock::now();
         
-        tree->bulkInsert(queries, bulkInsertLog);
+        tree->bulkInsert(queries, bulkInsertLog, 0);
 
         bulkInsertLog["time"] = duration_cast<microseconds>(high_resolution_clock::now() - startTime).count();
-
+        cout << "Insert time: " << bulkInsertLog["time"] << endl;
         return 0;
     }
     #endif
