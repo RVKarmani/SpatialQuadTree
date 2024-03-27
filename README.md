@@ -12,6 +12,6 @@ g++ main.cpp QuadTree.cpp Input.cpp -o quadTree
 ```
 #### (Windows)
 ```
-./quadTree.exe dataExample.txt -1 queryExample.txt
+.\quadTree.exe dataExample.txt -1 queryExample.txt
 ```
 -1 means load all data from dataExample.txt

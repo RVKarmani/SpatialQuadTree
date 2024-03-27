@@ -4,3 +4,5 @@
 *.exe
 \build
 *.txt
+test.cpp
+quadTree
