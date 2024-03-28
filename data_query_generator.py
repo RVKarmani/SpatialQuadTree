@@ -68,10 +68,10 @@ with open('queries.txt', 'w') as f:
         # f.write("{} {} {}\n".format(random.choice(query_choices), coordinate[0], coordinate[1]))
         f.write("{} {} {}\n".format('i', coordinate[0], coordinate[1]))
             
-# curve_x, curve_y = zip(*curve_points)
+curve_x, curve_y = zip(*curve_points)
 # print(f"Curve X: {curve_x}")
 # print(f"\nCurve Y: {curve_y}")
-# Plotting
+# # Plotting
 # plt.plot(*zip(p0, c0, c1, p1), 'ro-')  # Plot control points and endpoints
 # plt.plot(curve_x, curve_y, label='Bezier Curve')
 # plt.xlabel('X')

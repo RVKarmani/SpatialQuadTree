@@ -38,33 +38,36 @@ void QuadTreeNode::packing() {
     }
 }
 
-void QuadTreeNode::insert(Record r) {
+QuadTreeNode* QuadTreeNode::insert(Record r) // return leaf that is inserted, nullptr if not in range
+{
     if (isLeaf()) {
+        if (!this->intersects(r)) return nullptr;
         data.push_back(r);
         if (data.size() > CAPACITY) {
             divide();
+            QuadTreeNode *ret_leaf = this;
             for (auto rec : data) {
                 auto c = children.begin();
                 while (!(*c)->intersects(rec))
                     c++;
                 (*c)->data.push_back(rec);
+                if (&rec == &r) // found r
+                    ret_leaf = *c;
             }
             data.clear();
+            return ret_leaf;
+        } else {
+            return this;
         }
     } else {
         auto c = children.begin();
-        while (!(*c)->intersects(r))
+        while (!(*c)->intersects(r)) {
             c++;
-        (*c)->insert(r);
+            if (c == children.end()) return nullptr;
+        }
+        return (*c)->insert(r);
     }
 }
-
-void QuadTreeNode::bulkInsert(Input queries, map<string, double> &log) {
-    for (auto q: queries) {
-        this->insert(q);
-    }
-}
-
 
 void QuadTreeNode::divide() {
 
@@ -319,3 +322,27 @@ void QuadTreeNode::getStatistics() {
 }
 
 QuadTreeNode::~QuadTreeNode() {}
+
+void QuadTree::bulkInsert(Input queries, map<string, double> &log, int method) {
+    if (method == 0) {
+        for (auto q : queries)
+        {
+            this->root->insert(q);
+        }
+    }
+    else if (method == 1) { // try last leaf first, if fail insert from root
+        QuadTreeNode* last_leaf = this->root;
+        for (auto q : queries)
+        {
+            if (last_leaf->insert(q) == nullptr) {
+                last_leaf = this->root->insert(q);
+            }
+        }
+    }
+    else {
+        for (auto q : queries)
+        {
+            this->root->insert(q);
+        }
+    }  
+}

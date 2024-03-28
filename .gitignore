@@ -4,5 +4,6 @@
 *.exe
 \build
 *.txt
+!data/*.txt
 test.cpp
 quadTree
