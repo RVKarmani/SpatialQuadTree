@@ -1,12 +1,30 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import random
+import random, argparse
+
+# Define the parser
+parser = argparse.ArgumentParser(description='Quadtree data/query generator')
+
+parser.add_argument('--xl', help="x low coordinate for boundary", type=int, default=-180)
+parser.add_argument('--yl', help="y low coordinate for boundary", type=int, default=-90)
+parser.add_argument('--xh', help="x high coordinate for boundary", type=int, default=180)
+parser.add_argument('--yh', help="y high coordinate for boundary", type=int, default=90)
+
+parser.add_argument('--n', help="Number of queries", type=int, default=1000000)
+parser.add_argument('--s', help="Sortedness for inserts", type=lambda s: 0 <= float(s) <= 1, default=1)
+
+args = parser.parse_args()
 
 # Boundary
-X_LOW = -180
-Y_LOW = -90
-X_HIGH = 180
-Y_HIGH = 90
+X_LOW = args.xl
+Y_LOW = args.yl
+X_HIGH = args.xh
+Y_HIGH = args.yh
+
+# Number of points
+NUM_QUERIES = args.n
+NUM_SORTED = args.s * NUM_QUERIES
+NUM_RANDOM = NUM_QUERIES - NUM_SORTED
 
 # Endpoints
 p0 = (random.uniform(X_LOW, X_LOW + 5), random.uniform(Y_LOW, Y_LOW + 5))
@@ -33,24 +51,20 @@ def bezier_curve(p0, p1, c0, c1, t):
 # c1 = np.array(p1) + np.random.uniform(-control_range, control_range, size=2)
 
 # Generate points on the curve
-# Number of points
-NUM_POINTS = 150
-t_values = np.linspace(0, 1, NUM_POINTS)
+t_values = np.linspace(0, 1, NUM_SORTED)
 curve_points = [bezier_curve(p0, p1, c0, c1, t) for t in t_values]
 
-print("Generating data for quadtree")
-with open('data.txt', 'w') as f:
-    # Use first 100 values for building the path, rest for queries
-    for idx, coordinate in enumerate(curve_points[:100]):
-        f.write("{} {} {}\n".format(idx + 1, coordinate[0], coordinate[1]))
-        print(f"{idx + 1} - {coordinate}")
+# print("Generating data for quadtree")
+# with open('data.txt', 'w') as f:
+#     # Use first 100 values for building the path, rest for queries
+#     for idx, coordinate in enumerate(curve_points[:NUM_SORTED]):
+#         f.write("{} {} {}\n".format(idx + 1, coordinate[0], coordinate[1]))
 
 print("Generating queries for quadtree")
-# query_choices = ['i', 'q']
+# query_choices = ['i', 'p']
 
 with open('queries.txt', 'w') as f:
-    # Use first 100 values for building the path, use rest for inserts 
-    for coordinate in curve_points[100:]:
+    for coordinate in curve_points:
         # f.write("{} {} {}\n".format(random.choice(query_choices), coordinate[0], coordinate[1]))
         f.write("{} {} {}\n".format('i', coordinate[0], coordinate[1]))
             
