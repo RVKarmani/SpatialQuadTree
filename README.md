@@ -28,5 +28,6 @@ Parameters:
 #### (Windows)
 ```
 .\quadTree.exe dataExample.txt -1 queryExample.txt
+./quadTree dataExample.txt -1 queryExample.txt
 ```
 -1 means load all data from dataExample.txt
