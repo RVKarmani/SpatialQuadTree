@@ -53,7 +53,7 @@ int main(int argc, char **argv){
         mode = "n";
     }
     else {
-        mode = argv[5];
+        mode = argv[4];
     }
 
     std::cout << "Mode: " << mode << "\n";
