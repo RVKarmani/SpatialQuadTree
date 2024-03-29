@@ -332,12 +332,18 @@ void QuadTree::bulkInsert(Input queries, map<string, double> &log, int method) {
     }
     else if (method == 1) { // try last leaf first, if fail insert from root
         QuadTreeNode* last_leaf = this->root;
+        int total_num = 0;
+        int miss_num = 0;
         for (auto q : queries)
         {
-            if (last_leaf->insert(q) == nullptr) {
-                last_leaf = this->root->insert(q);
+            total_num++;
+            last_leaf = last_leaf->insert(q);
+            if (last_leaf == nullptr) {
+                last_leaf = this->root->insert(q); // will not return nullptr
+                miss_num++;
             }
         }
+        cout<<"Total inserts: "<<total_num<<" Miss inserts: "<<miss_num<<endl;
     }
     else {
         for (auto q : queries)

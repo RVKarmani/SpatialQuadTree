@@ -100,6 +100,7 @@ int main(int argc, char **argv){
 
         naiveInsertLog["time"] = duration_cast<microseconds>(high_resolution_clock::now() - startTime).count();
         cout << "Naive Insert time: " << naiveInsertLog["time"] << endl;
+        tree->getStatistics();
     }
 
     else if (mode == '1')
@@ -114,6 +115,7 @@ int main(int argc, char **argv){
 
         bulkInsertLog["time"] = duration_cast<microseconds>(high_resolution_clock::now() - startTime).count();
         cout << "Bulk Insert time: " << bulkInsertLog["time"] << endl;
+        tree->getStatistics();
     }
 
     else if (mode == 'n') {
