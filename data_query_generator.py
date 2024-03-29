@@ -27,7 +27,15 @@ NUM_QUERIES = args.n
 NUM_SORTED = int(args.s * NUM_QUERIES)
 NUM_RANDOM = int(NUM_QUERIES - NUM_SORTED)
 
-print(f"Parameters: NumQueries: {NUM_QUERIES}\nNumSorted: {NUM_SORTED}\nNumRandom: {NUM_RANDOM}")
+print("Input Parameters")
+for action in parser._actions:
+    if action.dest != 'help':
+        option_strings = ', '.join(action.option_strings)
+        print(f"{option_strings} [{action.help}]: {getattr(args, action.dest)}")
+
+FILE_SUFFIX = f"n-{NUM_QUERIES}_s-{args.s}_xl-{args.xl}_yl-{args.yl}_xh-{args.xh}_yh-{args.yh}"
+QUERY_FILE = f"queries-{FILE_SUFFIX}.txt"
+DATA_FILE = f"data-{FILE_SUFFIX}.txt"
 
 # Endpoints
 p0 = (random.uniform(X_LOW, X_LOW + 5), random.uniform(Y_LOW, Y_LOW + 5))
@@ -69,7 +77,7 @@ sorted_choices = [RANDOM_CHOICE, SORTED_CHOICE]
 INSERT_QUERY = 'i'
 index = 1
 
-with open('queries.txt', 'w') as query_file, open('data.txt', 'w') as data_file:
+with open(QUERY_FILE, 'w') as query_file, open(DATA_FILE, 'w') as data_file:
     while NUM_RANDOM > 0 and not curve_points.empty():
         choice = random.choice(sorted_choices)
         if choice == RANDOM_CHOICE:
