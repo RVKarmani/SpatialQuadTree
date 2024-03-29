@@ -26,7 +26,7 @@ Parameters:
 
 #### (Linux)
 ```
-.\quadTree dataExample.txt -1 queryExample.txt 1
+./quadTree dataExample.txt -1 queryExample.txt 1
 ```
 #### (Windows)
 ```
