@@ -73,7 +73,7 @@ print("Generating queries for quadtree")
 
 RANDOM_CHOICE = 'r'
 SORTED_CHOICE = 'i'
-sorted_choices = [SORTED_CHOICE,RANDOM_CHOICE]
+sorted_choices = [RANDOM_CHOICE,SORTED_CHOICE]
 
 INSERT_QUERY = 'i'
 index = 1
