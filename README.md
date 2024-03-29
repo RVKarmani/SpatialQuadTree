@@ -8,7 +8,7 @@ g++ main.cpp QuadTree.cpp Input.cpp -o quadTree
 ### Execute 
 #### (Linux)
 ```
-.\quadTree dataExample.txt -1 queryExample.txt 1
+./quadTree dataExample.txt -1 queryExample.txt 1
 ```
 #### (Windows)
 ```
