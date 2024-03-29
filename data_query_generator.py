@@ -6,13 +6,13 @@ from queue import Queue
 # Define the parser
 parser = argparse.ArgumentParser(description='Quadtree data/query generator')
 
-parser.add_argument('--xl', help="x low coordinate for boundary", type=int, default=-180)
-parser.add_argument('--yl', help="y low coordinate for boundary", type=int, default=-90)
-parser.add_argument('--xh', help="x high coordinate for boundary", type=int, default=180)
-parser.add_argument('--yh', help="y high coordinate for boundary", type=int, default=90)
+parser.add_argument('-xl', help="x low coordinate for boundary", type=int, default=-180)
+parser.add_argument('-yl', help="y low coordinate for boundary", type=int, default=-90)
+parser.add_argument('-xh', help="x high coordinate for boundary", type=int, default=180)
+parser.add_argument('-yh', help="y high coordinate for boundary", type=int, default=90)
 
-parser.add_argument('--n', help="Number of queries", type=int, default=1000000)
-parser.add_argument('--s', help="Sortedness for inserts", type=lambda s: 0 <= float(s) <= 1, default=0.5)
+parser.add_argument('-n', help="Number of queries", type=int, default=1000000)
+parser.add_argument('-s', help="Sortedness for inserts", type=lambda s: 0 <= float(s) <= 1, default=0.5)
 
 args = parser.parse_args()
 
@@ -34,7 +34,8 @@ for action in parser._actions:
         print(f"{option_strings} [{action.help}]: {getattr(args, action.dest)}")
 
 FILE_SUFFIX = f"n-{NUM_QUERIES}_s-{args.s}_xl-{args.xl}_yl-{args.yl}_xh-{args.xh}_yh-{args.yh}"
-QUERY_FILE = f"queries-{FILE_SUFFIX}.txt"
+# QUERY_FILE = f"queries-{FILE_SUFFIX}.txt"
+QUERY_FILE = f"insert.txt"
 DATA_FILE = f"data-{FILE_SUFFIX}.txt"
 
 # Endpoints
@@ -71,42 +72,42 @@ for t in t_values:
 print("Generating queries for quadtree")
 
 RANDOM_CHOICE = 'r'
-SORTED_CHOICE = 's'
-sorted_choices = [RANDOM_CHOICE, SORTED_CHOICE]
+SORTED_CHOICE = 'i'
+sorted_choices = [SORTED_CHOICE,RANDOM_CHOICE]
 
 INSERT_QUERY = 'i'
 index = 1
 
-with open(QUERY_FILE, 'w') as query_file, open(DATA_FILE, 'w') as data_file:
+with open(QUERY_FILE, 'w') as query_file: #, open(DATA_FILE, 'w') as data_file:
     while NUM_RANDOM > 0 and not curve_points.empty():
         choice = random.choice(sorted_choices)
         if choice == RANDOM_CHOICE:
             query_file.write("{} {} {}\n".format(INSERT_QUERY, random.uniform(X_LOW, X_HIGH), random.uniform(Y_LOW, Y_HIGH)))
             NUM_RANDOM -= 1
 
-            data_file.write("{} {} {}\n".format(index, random.uniform(X_LOW, X_HIGH), random.uniform(Y_LOW, Y_HIGH)))
-            index = index + 1
+            # data_file.write("{} {} {}\n".format(index, random.uniform(X_LOW, X_HIGH), random.uniform(Y_LOW, Y_HIGH)))
+            # index = index + 1
 
         elif choice == SORTED_CHOICE:
             sorted_coord = curve_points.get()
             query_file.write("{} {} {}\n".format(INSERT_QUERY, sorted_coord[0], sorted_coord[1]))
             
-            data_file.write("{} {} {}\n".format(index, sorted_coord[0], sorted_coord[1]))
-            index = index + 1
+            # data_file.write("{} {} {}\n".format(index, sorted_coord[0], sorted_coord[1]))
+            # index = index + 1
 
     while NUM_RANDOM > 0:
         query_file.write("{} {} {}\n".format(INSERT_QUERY, random.uniform(X_LOW, X_HIGH), random.uniform(Y_LOW, Y_HIGH)))
         NUM_RANDOM -= 1
 
-        data_file.write("{} {} {}\n".format(index, random.uniform(X_LOW, X_HIGH), random.uniform(Y_LOW, Y_HIGH)))
-        index = index + 1
+        # data_file.write("{} {} {}\n".format(index, random.uniform(X_LOW, X_HIGH), random.uniform(Y_LOW, Y_HIGH)))
+        # index = index + 1
     
     while not curve_points.empty():
         sorted_coord = curve_points.get()
         query_file.write("{} {} {}\n".format(SORTED_CHOICE, sorted_coord[0], sorted_coord[1]))
 
-        data_file.write("{} {} {}\n".format(index, sorted_coord[0], sorted_coord[1]))
-        index = index + 1
+        # data_file.write("{} {} {}\n".format(index, sorted_coord[0], sorted_coord[1]))
+        # index = index + 1
 
 # curve_x, curve_y = zip(*curve_points)
 # print(f"Curve X: {curve_x}")
