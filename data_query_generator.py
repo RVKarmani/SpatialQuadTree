@@ -3,6 +3,8 @@ import numpy as np
 import random, argparse
 from queue import Queue
 
+from tqdm import tqdm
+
 # Define the parser
 parser = argparse.ArgumentParser(description='Quadtree data/query generator')
 
@@ -35,9 +37,11 @@ for action in parser._actions:
         print(f"{option_strings} [{action.help}]: {getattr(args, action.dest)}")
 
 FILE_SUFFIX = f"n-{NUM_QUERIES}_s-{args.s}_xl-{args.xl}_yl-{args.yl}_xh-{args.xh}_yh-{args.yh}"
-QUERY_FILE = f"insert.txt"
+# QUERY_FILE = f"insert.txt"
 # QUERY_FILE = f"queries-{FILE_SUFFIX}.txt"
 # DATA_FILE = f"data-{FILE_SUFFIX}.txt"
+
+QUERY_FILE = f"insert_s={args.s}.txt"
 
 # Endpoints
 p0 = (random.uniform(X_LOW, X_LOW + 5), random.uniform(Y_LOW, Y_LOW + 5))
@@ -76,9 +80,8 @@ print("Generating queries for quadtree")
 
 with open(QUERY_FILE, 'w') as query_file: #, open(DATA_FILE, 'w') as data_file:
     total_num = 0
-    while total_num < NUM_QUERIES:
+    for _ in tqdm(range(NUM_QUERIES)):
         choice = random.random()
-        total_num += 1
         if choice > args.s: # generate randomly
             query_file.write("{} {} {}\n".format(INSERT_SYMBOL, random.uniform(X_LOW, X_HIGH), random.uniform(Y_LOW, Y_HIGH)))
 
