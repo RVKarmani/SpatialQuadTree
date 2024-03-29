@@ -1,7 +1,13 @@
 import matplotlib.pyplot as plt
+import argparse
+
+
+parser = argparse.ArgumentParser(description='Quadtree data/query generator')
+parser.add_argument('-f', help="file name", type=str, default="insert.txt")
+args = parser.parse_args()
 
 # File loading
-filename = "data.txt"  # Replace with the actual name of your file
+filename = args.f  # Replace with the actual name of your file
 with open(filename, 'r') as file:
     data = file.read()
 # filename = "dataExample.txt"  # Replace with the actual name of your file
@@ -19,7 +25,7 @@ for line in lines:
 
 # Create the plot
 plt.figure(figsize=(8, 6))  # Adjust figure size as desired
-plt.scatter(x, y)
+plt.scatter(x, y, s=1, marker='.')
 plt.xlabel("X-Coordinate")
 plt.ylabel("Y-Coordinate")
 plt.title("Input Points Visualization")

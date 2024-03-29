@@ -62,7 +62,7 @@ int main(int argc, char **argv){
     // =============================================
     // Gaurantee that there are no other tasks in query
 
-    if (mode == "i" || mode == "b") {
+    if (mode == "0" || mode == "1") {
           const bool ONLY_INSERT_STRICT = false;
         // true: raise error if existing other types
         // false: remove other types
@@ -90,22 +90,20 @@ int main(int argc, char **argv){
 
     // =============================================
 
-    if (mode == "i") {
+    if (mode == "0") {
         // naive insert 
 
         map<string, double> naiveInsertLog;
 
         startTime = high_resolution_clock::now();
-        
-        for (auto q: queries) {
-            tree->insert(q);
-        }
+
+        tree->bulkInsert(queries, naiveInsertLog, 0);
 
         naiveInsertLog["time"] = duration_cast<microseconds>(high_resolution_clock::now() - startTime).count();
         cout << "Naive Insert time: " << naiveInsertLog["time"] << endl;
     }
 
-    else if (mode == "b")
+    else if (mode == "1")
     {
         // bulk insert
 
@@ -113,7 +111,7 @@ int main(int argc, char **argv){
        
         startTime = high_resolution_clock::now();
         
-        tree->bulkInsert(queries, bulkInsertLog, 0);
+        tree->bulkInsert(queries, bulkInsertLog, 1);
 
         bulkInsertLog["time"] = duration_cast<microseconds>(high_resolution_clock::now() - startTime).count();
         cout << "Bulk Insert time: " << bulkInsertLog["time"] << endl;
