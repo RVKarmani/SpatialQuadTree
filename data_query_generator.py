@@ -34,9 +34,10 @@ for action in parser._actions:
         print(f"{option_strings} [{action.help}]: {getattr(args, action.dest)}")
 
 FILE_SUFFIX = f"n-{NUM_QUERIES}_s-{args.s}_xl-{args.xl}_yl-{args.yl}_xh-{args.xh}_yh-{args.yh}"
-# QUERY_FILE = f"queries-{FILE_SUFFIX}.txt"
-QUERY_FILE = f"insert.txt"
+QUERY_FILE = f"queries-{FILE_SUFFIX}.txt"
 DATA_FILE = f"data-{FILE_SUFFIX}.txt"
+
+print(f"./quadTree {DATA_FILE} -1 {QUERYFILE}")
 
 # Endpoints
 p0 = (random.uniform(X_LOW, X_LOW + 5), random.uniform(Y_LOW, Y_LOW + 5))
