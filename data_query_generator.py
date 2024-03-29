@@ -11,7 +11,7 @@ parser.add_argument('-yl', help="y low coordinate for boundary", type=int, defau
 parser.add_argument('-xh', help="x high coordinate for boundary", type=int, default=180)
 parser.add_argument('-yh', help="y high coordinate for boundary", type=int, default=90)
 
-parser.add_argument('-n', help="Number of queries", type=int, default=1000000)
+parser.add_argument('-n', help="Number of queries", type=int, default=100000)
 parser.add_argument('-s', help="Sortedness for inserts", type=float, default=0.5)
 
 args = parser.parse_args()

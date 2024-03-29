@@ -47,23 +47,22 @@ int main(int argc, char **argv){
     cout << "Index creation time: " << time << endl;
 
     // Start tasks based on mode
-    const char* mode; 
+    char mode; 
     if (argc == 4) {
         // use the default normal mode
-        mode = "n";
+        mode = 'n';
     }
     else {
-        mode = argv[5];
+        mode = argv[4][0];
     }
 
     std::cout << "Mode: " << mode << "\n";
-    return 0;
 
     // =============================================
     // Gaurantee that there are no other tasks in query
 
-    if (mode == "0" || mode == "1") {
-          const bool ONLY_INSERT_STRICT = false;
+    if (mode == '0' || mode == '1') {
+        const bool ONLY_INSERT_STRICT = false;
         // true: raise error if existing other types
         // false: remove other types
 
@@ -85,12 +84,12 @@ int main(int argc, char **argv){
             queries.erase(std::remove_if(queries.begin(), queries.end(), [](const Record& q) {
                 return q.type != 'i';
             }), queries.end());
-        }       
-    }  
+        }
+    }
 
     // =============================================
 
-    if (mode == "0") {
+    if (mode == '0') {
         // naive insert 
 
         map<string, double> naiveInsertLog;
@@ -103,7 +102,7 @@ int main(int argc, char **argv){
         cout << "Naive Insert time: " << naiveInsertLog["time"] << endl;
     }
 
-    else if (mode == "1")
+    else if (mode == '1')
     {
         // bulk insert
 
@@ -117,7 +116,7 @@ int main(int argc, char **argv){
         cout << "Bulk Insert time: " << bulkInsertLog["time"] << endl;
     }
 
-    else if (mode == "n") {
+    else if (mode == 'n') {
         // normal
 
         map<string, double> rangeLog, pointLog, knnLog, inLog;
