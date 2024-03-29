@@ -37,7 +37,8 @@ FILE_SUFFIX = f"n-{NUM_QUERIES}_s-{args.s}_xl-{args.xl}_yl-{args.yl}_xh-{args.xh
 QUERY_FILE = f"queries-{FILE_SUFFIX}.txt"
 DATA_FILE = f"data-{FILE_SUFFIX}.txt"
 
-print(f"./quadTree {DATA_FILE} -1 {QUERYFILE}")
+print(f"./quadTree dataExample.txt -1 {QUERY_FILE}")
+print(f"./quadTree {DATA_FILE} -1 {QUERY_FILE}")
 
 # Endpoints
 p0 = (random.uniform(X_LOW, X_LOW + 5), random.uniform(Y_LOW, Y_LOW + 5))

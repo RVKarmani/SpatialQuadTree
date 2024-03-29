@@ -8,7 +8,8 @@ g++ main.cpp QuadTree.cpp Input.cpp -o quadTree
 
 ### Generating Queries
 ```
-python3 data_query_generator.py --xl=-500 --yl=-200 --xh=500 --yh=200 --n=100
+python3 data_query_generator.py -xl=-500 -yl=-200 -xh=500 -yh=200
+ -n=100000
 ```
 Parameters:
 - `-xl` - X-Low for boundary (Bottom Left), default = -180

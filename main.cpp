@@ -57,7 +57,6 @@ int main(int argc, char **argv){
     }
 
     std::cout << "Mode: " << mode << "\n";
-    return 0;
 
     // =============================================
     // Gaurantee that there are no other tasks in query
