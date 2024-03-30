@@ -12,7 +12,7 @@ g++ main.cpp QuadTree.cpp Input.cpp -o quadTree
 ```
 #### (Windows)
 ```
-.\quadTree.exe dataExample.txt -1 queryExample.txt {mode}
+.\quadTree.exe dataExample.txt -1 queryExample.txt 1
 ```
 
 mode can be:
