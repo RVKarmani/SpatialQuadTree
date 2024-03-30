@@ -3,6 +3,7 @@ from argparse import ArgumentParser
 import os
 import json
 import numpy as np
+import pandas as pd
 
 
 def get_parser():
@@ -82,10 +83,19 @@ def draw_t2r():
 def draw_tree():
     print("Drawing the tree map...")
 
-    for datafile in os.listdir("data/s"):
-        if not datafile.startswith("insert"):
-            continue
-        print(datafile)
+    # Load the exported QuadTree boundary data
+    df = pd.read_csv('tree.csv', header=None, names=['xmin', 'ymin', 'xmax', 'ymax'])
+
+    # Plot each boundary box
+    for _, row in df.iterrows():
+        plt.plot([row['xmin'], row['xmax'], row['xmax'], row['xmin'], row['xmin']],
+                [row['ymin'], row['ymin'], row['ymax'], row['ymax'], row['ymin']], 'r-')
+
+    plt.title('QuadTree Boundary Boxes')
+    plt.xlabel('X')
+    plt.ylabel('Y')
+    plt.axis('equal')
+    plt.show()
 
 
 def main():

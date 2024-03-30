@@ -3,8 +3,15 @@ import argparse
 
 
 parser = argparse.ArgumentParser(description='Quadtree data/query generator')
-parser.add_argument('-f', help="file name", type=str, default="insert.txt")
+parser.add_argument('-f', help="file name", type=str, default="data/s/insert_s=S.txt")
+parser.add_argument('-s', help="random rate", type=str, default="0.25")
 args = parser.parse_args()
+
+if "S" in args.f:
+  args.f = args.f.replace("S", args.s)
+  title = f"Input Points Visualization, Random Rate = {args.s}" 
+else:
+  title = "Input Points Visualization" 
 
 # File loading
 filename = args.f  # Replace with the actual name of your file
@@ -28,7 +35,7 @@ plt.figure(figsize=(8, 6))  # Adjust figure size as desired
 plt.scatter(x, y, s=1, marker='.')
 plt.xlabel("X-Coordinate")
 plt.ylabel("Y-Coordinate")
-plt.title("Input Points Visualization")
+plt.title(title)
 plt.grid(True)
 
 # Show the plot

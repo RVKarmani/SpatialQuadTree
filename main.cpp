@@ -198,6 +198,8 @@ int main(int argc, char **argv){
         std::cerr << "Unrecoganized mode: " << mode << "\n";
         return 2;
     }
+
+    tree->exportTree("tree.csv");
    
     return 0;
 }

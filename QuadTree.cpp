@@ -352,3 +352,22 @@ void QuadTree::bulkInsert(Input queries, map<string, double> &log, int method) {
         }
     }  
 }
+
+void QuadTreeNode::exportBoundaries(ofstream& file) {
+    if (!isLeaf()) {
+        // For non-leaf nodes, write their boundary and recurse
+        file << box[XLOW] << "," << box[YLOW] << "," << box[XHIGH] << "," << box[YHIGH] << std::endl;
+        for (auto child : children) {
+            if (child) child->exportBoundaries(file);
+        }
+    }
+}
+
+void QuadTree::exportTree(const string& filename) {
+    ofstream file(filename);
+    if (root) {
+        root->exportBoundaries(file);
+    }
+    file.close();
+}
+
