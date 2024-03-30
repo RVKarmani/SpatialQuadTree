@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 from argparse import ArgumentParser
+import os
 
 
 def get_parser():
@@ -43,7 +44,11 @@ def draw_t2r():
 def draw_tree():
     print("Drawing the tree map...")
 
-    points = []
+    for datafile in os.listdir("data/s"):
+        if not datafile.startswith("insert"):
+            continue
+        print(datafile)
+        
 
 
     
