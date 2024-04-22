@@ -33,6 +33,8 @@ public :
     bool isLeaf();
     void getStatistics();
     ~QuadTreeNode();
+
+    void exportBoundaries(ofstream& file);
 };
 
 class QuadTree{
@@ -57,6 +59,8 @@ public:
     bool isLeaf() { return root->isLeaf(); };
     void getStatistics() { return root->getStatistics(); };
     ~QuadTree(){delete(root);};
+
+    void exportTree(const string& filename);
 };
 
 #endif //QUADTREE_QUADTREE_H
