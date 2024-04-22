@@ -6,21 +6,27 @@
 g++ main.cpp QuadTree.cpp Input.cpp -o quadTree
 ```
 ### Execute 
+```
+./quadTree [init_data_file] -1 [insert_data_file] [mode] [level]
+```
+[mode] can be:
+- 0: naive bulk insert
+- 1: bulk insert with optimization 1
+- n or leave empty: normal
+  
+[level] can be:
+- 0, 1, 2, ... represent level of parent stored during optimized bulk insert
+
+-1 means load all data from dataExample.txt
 #### (Linux)
 ```
 ./quadTree dataExample.txt -1 queryExample.txt 1
 ```
 #### (Windows)
 ```
-.\quadTree.exe dataExample.txt -1 queryExample.txt 1
+.\quadTree.exe ./data/empty.txt -1 ./data/s/insert_s=0.75.txt 1 0
 ```
 
-mode can be:
-- 0: naive bulk insert
-- 1: bulk insert with optimization 1
-- n or leave empty: normal
-
--1 means load all data from dataExample.txt
 ## Generating Queries
 ```
 python3 data_query_generator.py -xl=-500 -yl=-200 -xh=500 -yh=200 -n=100000

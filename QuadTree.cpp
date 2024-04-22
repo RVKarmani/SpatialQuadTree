@@ -38,7 +38,7 @@ void QuadTreeNode::packing() {
     }
 }
 
-QuadTreeNode* QuadTreeNode::insert(Record r) // return leaf that is inserted, nullptr if not in range
+QuadTreeNode *QuadTreeNode::insert(Record r) // return leaf that is inserted, nullptr if not in range
 {
     if (isLeaf()) {
         if (!this->intersects(r)) return nullptr;
@@ -66,6 +66,53 @@ QuadTreeNode* QuadTreeNode::insert(Record r) // return leaf that is inserted, nu
             if (c == children.end()) return nullptr;
         }
         return (*c)->insert(r);
+    }
+}
+
+QuadTreeNode *QuadTreeNode::insert(Record r, queue<QuadTreeNode *> &parentQueue, int maxQueueSize = 1) // return leaf that is inserted, nullptr if not in range
+{
+    if (parentQueue.size() >= maxQueueSize) {
+        parentQueue.pop();
+    }
+    if (isLeaf())
+    {
+        if (!this->intersects(r))
+            return nullptr;
+        data.push_back(r);
+        if (data.size() > CAPACITY)
+        {
+            divide();
+            QuadTreeNode *ret_leaf = this;
+            for (auto rec : data)
+            {
+                auto c = children.begin();
+                while (!(*c)->intersects(rec))
+                    c++;
+                (*c)->data.push_back(rec);
+                if (&rec == &r) // found r
+                    ret_leaf = *c;
+            }
+            data.clear();
+            parentQueue.emplace(ret_leaf);
+            return ret_leaf;
+        }
+        else
+        {
+            parentQueue.emplace(this);
+            return this;
+        }
+    }
+    else
+    {
+        parentQueue.emplace(this);
+        auto c = children.begin();
+        while (!(*c)->intersects(r))
+        {
+            c++;
+            if (c == children.end())
+                return nullptr;
+        }
+        return (*c)->insert(r, parentQueue);
     }
 }
 
@@ -323,32 +370,55 @@ void QuadTreeNode::getStatistics() {
 
 QuadTreeNode::~QuadTreeNode() {}
 
-void QuadTree::bulkInsert(Input queries, map<string, double> &log, int method) {
-    if (method == 0) {
+void QuadTree::bulkInsert(Input queries, map<string, double> &log, int method, int level) {
+    if (method == 0) { // naive
         for (auto q : queries)
         {
             this->root->insert(q);
         }
     }
     else if (method == 1) { // try last leaf first, if fail insert from root
-        QuadTreeNode* last_leaf = this->root;
-        int total_num = 0;
-        int miss_num = 0;
-        for (auto q : queries)
-        {
-            total_num++;
-            last_leaf = last_leaf->insert(q);
-            if (last_leaf == nullptr) {
-                last_leaf = this->root->insert(q); // will not return nullptr
-                miss_num++;
+        if (level == 0) {
+            QuadTreeNode* last_leaf = this->root;
+            int total_num = 0;
+            int miss_num = 0;
+            for (auto q : queries) {
+                total_num++;
+                last_leaf = last_leaf->insert(q);
+                if (last_leaf == nullptr) {
+                    last_leaf = this->root->insert(q); // will not return nullptr
+                    miss_num++;
+                }
             }
+            cout<<"Total inserts: "<<total_num<<" Miss inserts: "<<miss_num<<endl;
         }
-        cout<<"Total inserts: "<<total_num<<" Miss inserts: "<<miss_num<<endl;
+        else {
+            QuadTreeNode *last_parent = this->root;
+            int total_num = 0;
+            int miss_num = 0;
+            queue<QuadTreeNode *> parentQueue({this->root});
+            for (auto q : queries)
+            {
+                total_num++;
+                last_parent = parentQueue.front();
+                parentQueue.pop();
+                last_parent = last_parent->insert(q, parentQueue, level);
+                if (last_parent == nullptr)
+                {
+                    last_parent = this->root->insert(q, parentQueue, level); // will not return nullptr
+                    miss_num++;
+                }
+            }
+            cout << "Total inserts: " << total_num << " Miss inserts: " << miss_num << endl;
+        }
     }
-    else {
+    else if (method == 2) {
+
+    }
+    else { // naive
         for (auto q : queries)
         {
             this->root->insert(q);
         }
-    }  
+    }
 }

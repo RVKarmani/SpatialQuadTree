@@ -14,7 +14,8 @@ int main(int argc, char **argv){
     1: data filename
     2: atoi: -1 means load all data from dataExample.txt
     3: query filename
-    4: mode: [i, b, n] means insert, bulk insert, normal
+    4: mode: [i, n, 0, 1] means insert, normal, naive bulk insert, optimized bulk insert
+    5: level:[0, 1, 2, 3, 4] level of parent when using optimized bulk insert
     */
 
     std::cout << "===============================" << std::endl;
@@ -25,7 +26,7 @@ int main(int argc, char **argv){
     }
     std::cout << "===============================" << std::endl;
 
-    if (argc != 4 && argc != 5){
+    if (argc != 4 && argc != 5 && argc != 6) {
         cout << "Usage: ./quadTree dataFile limit queryFile" << endl;
         exit(1);
     }
@@ -51,6 +52,7 @@ int main(int argc, char **argv){
     if (argc == 4) {
         // use the default normal mode
         mode = 'n';
+        cout << "Mode not specified. Using normal mode." << endl;
     }
     else {
         mode = argv[4][0];
@@ -108,10 +110,15 @@ int main(int argc, char **argv){
         // bulk insert
 
         map<string, double> bulkInsertLog;
+        int level = 0;
        
         startTime = high_resolution_clock::now();
         
-        tree->bulkInsert(queries, bulkInsertLog, 1);
+        if (argc >= 6)
+            level = argv[5][0] - '0';
+            cout<<"Level of Parent stored: " << level <<endl;
+        
+        tree->bulkInsert(queries, bulkInsertLog, 1 , level);
 
         bulkInsertLog["time"] = duration_cast<microseconds>(high_resolution_clock::now() - startTime).count();
         cout << "Bulk Insert time: " << bulkInsertLog["time"] << endl;
