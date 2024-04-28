@@ -118,8 +118,8 @@ def generate_random_curve():
     d = np.random.uniform(0.5, 2.0)  # frequency of the cosine function
 
     # Calculate x and y coordinates
-    x = a * np.sin(c * theta)
-    y = b * np.cos(d * theta)
+    x = X_LOW + (X_HIGH - X_LOW) * (a * np.sin(c * theta) - np.sin(c * np.pi / 2)) / (2 - np.sin(c * np.pi / 2))
+    y = Y_LOW + (Y_HIGH - Y_LOW) * (b * np.cos(d * theta) - np.cos(d * np.pi / 2)) / (2 - np.cos(d * np.pi / 2))
 
     # Add coordinates to the queue
     return zipper(x, y, NUM_SORTED)
