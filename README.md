@@ -45,6 +45,7 @@ Parameters:
 
 - `-n` - Number of total queries to generate, default = 100000
 - `-s` - Sortedness (Fraction of queries that follow path), default = 0.6 - 60% of queries follow path, rest are randomly generated
+- `-c` - Curve type for data, random_curve, fermat_spiral, circ_arc, bezier
 
 ## Visualize insert file
 ```
