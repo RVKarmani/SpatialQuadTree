@@ -413,6 +413,90 @@ void QuadTree::bulkInsert(Input queries, map<string, double> &log, int method, i
         }
     }
     else if (method == 2) {
+        // based on 1. try last leaf -> tranverse
+        // add: cache. Save cache_size leaves in the cache
+
+        int cache_size = 3;
+        list<QuadTreeNode*> cache;
+
+        if (level == 0) {
+            QuadTreeNode* leaf;
+            int total_num = 0;
+            int miss_num = 0;
+            for (auto q : queries) {
+                total_num++;
+
+                bool hit = false;
+                for (auto it = cache.begin(); it != cache.end(); ++it) {
+                    leaf = *it;
+                    leaf = leaf->insert(q);
+                    if (leaf != nullptr) {
+                        hit = true;
+                        // Move the node to the front of the cache
+                        cache.erase(it);
+                        cache.push_front(leaf);
+                        break;
+                    }
+                }
+
+                if (!hit) {
+                    // Cache miss, insert at root
+                    miss_num++;
+                    leaf = root->insert(q); // Insert at root and get new node
+                    if (leaf) {
+                        if (cache.size() >= cache_size) {
+                            cache.pop_back(); // Remove the least recently used node if cache is full
+                        }
+                        cache.push_front(leaf); // Add new node to the front of the cache
+                    }
+                }
+            }
+            cout<<"Total inserts: "<<total_num<<" Miss inserts: "<<miss_num<<endl;
+        }
+        else {
+
+            QuadTreeNode *leaf;
+            QuadTreeNode *parent;
+            int total_num = 0;
+            int miss_num = 0;
+            queue<QuadTreeNode *> parentQueue({this->root});  // used to find parent
+
+            for (auto q : queries)
+            {
+                total_num++;
+
+                bool hit = false;
+                for (auto it = cache.begin(); it != cache.end(); ++it) {
+                    parent = *it;
+                    leaf = parent->insert(q, parentQueue, level);
+                    if (leaf != nullptr) {
+                        hit = true;
+                        // Move the node to the front of the cache
+                        parent = parentQueue.front();
+                        parentQueue.pop();
+
+                        cache.erase(it);
+                        cache.push_front(parent);
+                        break;
+                    }
+                }
+
+                if (!hit) {
+                    // Cache miss, insert at root
+                    miss_num++;
+                    leaf = root->insert(q, parentQueue, level); // Insert at root and get new node
+                    if (leaf) {
+                        if (cache.size() >= cache_size) {
+                            cache.pop_back(); // Remove the least recently used node if cache is full
+                        }
+                        parent = parentQueue.front();
+                        parentQueue.pop();
+                        cache.push_front(parent); // Add new node to the front of the cache
+                    }
+                }
+            }
+            cout << "Total inserts: " << total_num << " Miss inserts: " << miss_num << endl;
+        }
 
     }
     else { // naive
