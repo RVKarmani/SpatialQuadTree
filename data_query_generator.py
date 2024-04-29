@@ -19,14 +19,19 @@ DIST_CHOICES = [UNIFORM_DIST, CLUSTERED_DIST, RANDOM_DIST]
 
 # Define the parser
 parser = argparse.ArgumentParser(description='Quadtree data/query generator')
-parser.add_argument('-xl', help="x low coordinate for boundary", type=int, default=-180)
-parser.add_argument('-yl', help="y low coordinate for boundary", type=int, default=-90)
-parser.add_argument('-xh', help="x high coordinate for boundary", type=int, default=180)
-parser.add_argument('-yh', help="y high coordinate for boundary", type=int, default=90)
-parser.add_argument('-n', help="Number of queries", type=int, default=100000)
+parser.add_argument('-xl', help="x low coordinate for boundary", type=int, default=-1800)
+parser.add_argument('-yl', help="y low coordinate for boundary", type=int, default=-900)
+parser.add_argument('-xh', help="x high coordinate for boundary", type=int, default=1800)
+parser.add_argument('-yh', help="y high coordinate for boundary", type=int, default=900)
+parser.add_argument('-n', help="Number of queries", type=int, default=1000000)
 parser.add_argument('-s', help="Sortedness for inserts", type=float, default=0.5)
+<<<<<<< HEAD
 parser.add_argument('-c', help="Curve type for data", type=str, choices=CURVE_CHOICES, default=BEZIER)
 parser.add_argument('-d', help="Distribution type for data", type=str, choices=DIST_CHOICES)
+=======
+parser.add_argument('-c', help="Curve type for data", type=str, choices=CURVE_CHOICES, default=RND_CRV)
+# parser.add_argument('-d', help="Distribution type for data", type=str, choices=DIST_CHOICES, default=CLUSTERED_DIST)
+>>>>>>> 89b314dd0adc9fa46924507457496e6d99593ecc
 
 args = parser.parse_args()
 
@@ -42,11 +47,7 @@ NUM_SORTED = int(args.s * NUM_QUERIES)
 NUM_RANDOM = int(NUM_QUERIES - NUM_SORTED)
 INSERT_SYMBOL = 'i'
 
-FILE_SUFFIX = f"n-{NUM_QUERIES}_s-{args.s}_xl-{args.xl}_yl-{args.yl}_xh-{args.xh}_yh-{args.yh}"
-# QUERY_FILE = f"insert.txt"
-# QUERY_FILE = f"queries-{FILE_SUFFIX}.txt"
-# DATA_FILE = f"data-{FILE_SUFFIX}.txt"
-QUERY_FILE = f"insert_s={args.s}.txt"
+QUERY_FILE = "data/insert_s={selectivity}_{suffix}.txt".format(selectivity = args.s, suffix = f"curve={args.c}" if args.c else f"dist={args.d}")
 
 # Functions
 def print_parameters():
@@ -62,10 +63,10 @@ def generate_distribution_points(distribution):
         y = np.random.uniform(Y_LOW, Y_HIGH, NUM_SORTED)
 
     elif distribution == CLUSTERED_DIST:
-        x = np.concatenate([np.random.normal(X_LOW, 1, NUM_SORTED // 2),
-                            np.random.normal(X_HIGH, 1, NUM_SORTED // 2)])
-        y = np.concatenate([np.random.normal(Y_LOW, 1, NUM_SORTED // 2),
-                            np.random.normal(Y_HIGH, 1, NUM_SORTED // 2)])
+        x = np.concatenate([np.random.normal(X_LOW, 30, NUM_SORTED // 2),
+                            np.random.normal(X_HIGH, 30, NUM_SORTED // 2)])
+        y = np.concatenate([np.random.normal(Y_LOW, 40, NUM_SORTED // 2),
+                            np.random.normal(Y_HIGH, 50, NUM_SORTED // 2)])
     return zipper(x, y, NUM_SORTED)
 
 def zipper(x, y, n):
@@ -74,28 +75,22 @@ def zipper(x, y, n):
         points.put((xval, yval))
     return points
 
-def generate_bezier_curve():
-    # Endpoints
-    p0 = (random.uniform(X_LOW, X_LOW + 5), random.uniform(Y_LOW, Y_LOW + 5))
-    p1 = (random.uniform(X_HIGH - 5, X_HIGH), random.uniform(Y_HIGH - 5, Y_HIGH))
+def cubic_bezier(t, p0, p1, p2, p3):
+    return (1-t)**3 * p0 + 3*(1-t)**2*t * p1 + 3*(1-t)*t**2 * p2 + t**3 * p3
 
-    # Control points
-    c0 = (-1 * p0[0] / random.randint(2, 4) , p0[1] / random.randint(2, 4))
-    c1 = (-1 * p1[0] / random.randint(2, 4) , p1[1] / random.randint(2, 4))
-    # Generate points on the curve
-    t_values = np.linspace(0, 1, NUM_SORTED)
+def generate_bezier_curve():
     curve_points = Queue(maxsize=NUM_SORTED)
+    t_values = np.linspace(0, 1, NUM_SORTED)
+
+    p0 = np.array([X_LOW, Y_LOW])
+    p1 = np.array([X_LOW * 0.25, Y_HIGH * 1.5])
+    p2 = np.array([X_HIGH * 0.25, Y_LOW * 1.5])
+    p3 = np.array([X_HIGH, Y_HIGH])
 
     for t in t_values:
-        curve_points.put(bezier_curve(p0, p1, c0, c1, t))
-
+        x, y = cubic_bezier(t, p0, p1, p2, p3)
+        curve_points.put((x, y))
     return curve_points
-
-def bezier_curve(p0, p1, c0, c1, t):
-    # Bezier curve equation
-    x = (1 - t)**3 * p0[0] + 3 * (1 - t)**2 * t * c0[0] + 3 * (1 - t) * t**2 * c1[0] + t**3 * p1[0]
-    y = (1 - t)**3 * p0[1] + 3 * (1 - t)**2 * t * c0[1] + 3 * (1 - t) * t**2 * c1[1] + t**3 * p1[1]
-    return x, y
 
 def generate_fermat_spiral():
     curve_points = Queue(maxsize=NUM_SORTED)
@@ -118,8 +113,8 @@ def generate_random_curve():
     d = np.random.uniform(0.5, 2.0)  # frequency of the cosine function
 
     # Calculate x and y coordinates
-    x = X_LOW + (X_HIGH - X_LOW) * (a * np.sin(c * theta) - np.sin(c * np.pi / 2)) / (2 - np.sin(c * np.pi / 2))
-    y = Y_LOW + (Y_HIGH - Y_LOW) * (b * np.cos(d * theta) - np.cos(d * np.pi / 2)) / (2 - np.cos(d * np.pi / 2))
+    x = X_LOW + (X_HIGH - X_LOW) * ((a * np.sin(c * theta)) / (2 * a))
+    y = Y_LOW + (Y_HIGH - Y_LOW) * ((b * np.cos(d * theta)) / (2 * b))
 
     # Add coordinates to the queue
     return zipper(x, y, NUM_SORTED)
@@ -136,7 +131,8 @@ def write_points_to_query_file(curve_points):
     index = 1
     with open(QUERY_FILE, 'w') as query_file: #, open(DATA_FILE, 'w') as data_file:
         total_num = 0
-        for _ in tqdm(range(NUM_QUERIES)):
+        # for _ in tqdm(range(NUM_QUERIES)):
+        for _ in (range(NUM_QUERIES)):
             choice = random.random()
             if choice > args.s: # generate randomly
                 query_file.write("{} {} {}\n".format(INSERT_SYMBOL, random.uniform(X_LOW, X_HIGH), random.uniform(Y_LOW, Y_HIGH)))
@@ -177,6 +173,7 @@ def get_curve_points(curve_type:str):
 
 # Main start
 print_parameters()
+<<<<<<< HEAD
 
 if args.d:
     curve_points = generate_distribution_points(args.d)
@@ -184,4 +181,8 @@ if args.d:
 else:
     curve_points = get_curve_points(args.c)
     plot_points(curve_points, args.c)
+=======
+curve_points = get_curve_points(args.c)
+# plot_points(curve_points, args.c)
+>>>>>>> 89b314dd0adc9fa46924507457496e6d99593ecc
 write_points_to_query_file(curve_points)
