@@ -5,130 +5,203 @@ import glob
 import json
 import numpy as np
 import pandas as pd
+import re
 
 
-def get_parser():
-    parser = ArgumentParser()
-    parser.add_argument("--task", type=str, default="t", choices=["m", "h", "t"], help="tree map, hitting rate, time")
-    
-    return parser
+def get_s_list(file_path):
+
+    if "bezier" in file_path:
+        suffix = "bezier"
+    elif "spiral" in file_path:
+        suffix = "fermat_spiral"
+    else:
+        raise
+
+    # Compile a regular expression to capture the 's' value from each command line
+    s_value_pattern = re.compile(rf'insert_s=(\d+\.\d+)_curve={suffix}.txt')
+
+    # List to store the extracted 's' values
+    extracted_s_values = []
+
+    # Open and read the file line by line
+    with open(file_path, 'r') as file:
+        for line in file:
+            # Search for the pattern in each line
+            search_result = s_value_pattern.search(line)
+            if search_result:
+                # If a match is found, add the 's' value to the list
+                extracted_s_values.append(float(search_result.group(1)))
+
+    # Print all the extracted 's' values
+    print(extracted_s_values)
+    return extracted_s_values
 
 
+def get_results(graph):
 
-def draw_ht2num():
-    """
-    hitting rate to the number of data   
+    ss = get_s_list(f"test_{graph}.sh")
+    # print(ss)
 
-    Parameters:
-    - hitting_rate: list
-    - random_rate: list
-    """
-    print("Drawing hitting to random rate...")
-    
-    hitting_rate = []
-    random_rate = []
-
-
-def draw_t2r():
-    """
-    time to the random rate of data
-
-    Parameters:
-    - t_naive: list
-    - t_bulk: list
-    - random_rate: list
-    """
-    print("Drawing time to random rate...")
-
-    with open("data/result.json", "r") as f:
+    with open(f"data/result_{graph}.json", "r") as f:
         results = json.load(f)
 
-    s2t_naive = {}
-    s2t_bulk = {}
+    prepare_results = []
 
-    for result in results:
+    for s, res in zip(ss, results):
+        res["s"] = s
+        for k, v in res.items():
+            if 'time' in k and k != "Index creation time":
+                time = v
+                break
+        else:
+            print(res)
+            raise "No time"
+        res["time"] = time
+        prepare_results.append(res)
 
-        if float(result["s"]) == 1:
-            continue
-
-        try:
-            s2t_bulk[float(result["s"])] = float(result["Bulk Insert time"])
-        except KeyError:
-            s2t_naive[float(result["s"])] = float(result["Naive Insert time"])  
-
-    print(s2t_bulk)
-    print(s2t_naive)
-
-    # Sorting keys for consistent plotting
-    keys_sorted = sorted(s2t_naive.keys())
-
-    # Extracting values in the sorted order of keys
-    naive_times = [s2t_naive[key] for key in keys_sorted]
-    bulk_times = [s2t_bulk[key] for key in keys_sorted]
-
-    # Defining the x-axis for the plot
-    x = np.arange(len(keys_sorted))
-
-    # Plotting both sets of times
-    width = 0.35  # Width of the bars
-    plt.bar(x - width/2, naive_times, width, label='Naive Insert Time')
-    plt.bar(x + width/2, bulk_times, width, label='Bulk Insert Time')
-
-    # Adding labels and title
-    plt.xlabel('Sortedness')
-    plt.ylabel('Time / $\mu$s')
-    plt.title('Comparison of Naive and Bulk Insert Times')
-    plt.xticks(x, labels=[str(key) for key in keys_sorted])
-    plt.legend()
-
-    # Displaying the plot
-    # plt.show()
-    plt.savefig("images/t2randomRate.png")
+    results = prepare_results
+    return results
 
 
-def draw_tree():
-    print("Drawing the tree map...")
+def get_mode_name(res):
 
-    # Getting all the CSV files in the 'tree' directory
-    files = glob.glob('tree/*.csv')
+    mode_id = res["Mode"]
+    # modes = {
+    #     0: "naive",
+    #     1: "leaf_or_parent",
+    #     2: "cache",
+    # }
 
-    for file_path in files:
-        # Extracting the file name to use as part of the chart's title
-        file_name = os.path.basename(file_path)
-        title_part = file_name.split('.')[0]  # Assuming the file name format is "tree_lll.csv", removing the extension
-        title_part = title_part.replace('tree_', '')  # Removing the prefix "tree_", leaving "lll"
+    if mode_id == 0:
+        mode = "naive"
+    elif mode_id == 1:
+        level = res['Level of Parent stored']
+        if level == 0:
+            mode = "leaf"
+        else:
+            mode = f"parent(level={level})"
+    elif mode_id == 2:
+        mode = "cache(size=3)"
+    else:
+        raise
 
-        # Reading the CSV file
-        df = pd.read_csv(file_path, header=None, names=['xmin', 'ymin', 'xmax', 'ymax'])
+    return mode
 
-        # Plotting each boundary box
-        for _, row in df.iterrows():
-            plt.plot([row['xmin'], row['xmax'], row['xmax'], row['xmin'], row['xmin']],
-                    [row['ymin'], row['ymin'], row['ymax'], row['ymax'], row['ymin']], 'k-')
 
-        # Setting the chart title to "QuadTree_lll" and axis labels
-        plt.title(f'QuadTree_{title_part}')
-        plt.xlabel('X')
-        plt.ylabel('Y')
-        plt.axis('equal')
+def draw_time_mode_s(all_results):
+    # Number of rows is the number of sets of results
+    num_rows = len(all_results)
+    
+    # Create a large figure to accommodate all subplots
+    fig, axes = plt.subplots(num_rows, 3, figsize=(16, 10 * num_rows))
+    
+    # Iterate through each set of results
+    for idx, (graph_name, results) in enumerate(all_results.items()):
+        # Prepare a dictionary to hold the data for each mode, and for each variable
+        mode_data = {}
         
-        # Displaying the chart
-        # plt.show()
-        plt.savefig(f'images/QuadTree_{title_part}.png')
+        # Process each result
+        for res in results:
+            s = res['s']
+            mode = get_mode_name(res)
+            time = res['time']
+            hit_rate = res.get("Hit rate", 0)  # Using .get to provide a default value if key is missing
+            height = res["height"]
+            
+            # If the mode is not yet in the dictionary, add it
+            if mode not in mode_data:
+                mode_data[mode] = {'s': [], 'time': [], 'hit_rate': [], 'height': []}
+            
+            # Append the 's', 'time', 'hit_rate', and 'height' to the appropriate lists in the dictionary
+            mode_data[mode]['s'].append(s)
+            mode_data[mode]['time'].append(time)
+            mode_data[mode]['hit_rate'].append(hit_rate)
+            mode_data[mode]['height'].append(height)
 
-        # Clearing the current figure for the next file
-        plt.clf()
+        # Define axes for each row
+        if num_rows > 1:
+            ax1, ax2, ax3 = axes[idx]
+        else:
+            ax1, ax2, ax3 = axes
+
+        # Plot time vs s
+        for mode, data in mode_data.items():
+            ax1.plot(data['s'], data['time'], label=mode)
+        ax1.set_title(f'Time vs. s ({graph_name})')
+        ax1.set_xlabel('s value')
+        ax1.set_ylabel('Time')
+        ax1.legend()
+
+        # Plot hit rate vs s
+        for mode, data in mode_data.items():
+            ax2.plot(data['s'], data['hit_rate'], label=mode)
+        ax2.set_title(f'Hit Rate vs. s ({graph_name})')
+        ax2.set_xlabel('s value')
+        ax2.set_ylabel('Hit Rate')
+        ax2.legend()
+
+        # Plot height vs s
+        for mode, data in mode_data.items():
+            ax3.plot(data['s'], data['height'], label=mode)
+        ax3.set_title(f'Height vs. s ({graph_name})')
+        ax3.set_xlabel('s value')
+        ax3.set_ylabel('Height')
+        ax3.legend()
+
+    # Adjust layout and display the plot
+    plt.tight_layout()
+    # plt.show()
+    graph_names = list(all_results.keys())
+    plt.savefig(f"images/results_time_hitRate_height__{graph_names}.png")
+
+
+def draw_level_hit_rate(graph="level_spiral"):
+    with open(f"data/result_{graph}.json", "r") as f:
+        results = json.load(f)
+
+    prepare_results = []
+
+    for res in results:
+        for k, v in res.items():
+            if 'time' in k and k != "Index creation time":
+                time = v
+                break
+        else:
+            print(res)
+            raise "No time"
+        res["time"] = time
+        prepare_results.append(res)
+
+    results = prepare_results
+
+    hit_rates = [res["Hit rate"] for res in results]
+    levels = [res["Level of Parent stored"] for res in results]
+
+    # Creating the plot
+    plt.figure(figsize=(10, 5))
+    plt.plot(levels, hit_rates, marker='o')
+    plt.title('Hit Rate by Level of Parent Stored')
+    plt.xlabel('Level of Parent Stored')
+    plt.ylabel('Hit Rate')
+    plt.grid(True)
+    plt.show()
+        
+
 
 
 def main():
-    args = get_parser().parse_args()
-    if args.task == "m":
-        draw_tree()
-    elif args.task == "h":
-        draw_ht2num()
-    elif args.task == "t":
-        draw_t2r()
+        
+    # # graph_names = ["bezier", "spiral"]
+    # graph_names = ["bezier"]
+    # all_results = {graph_name: get_results(graph_name) for graph_name in graph_names}
+
+    # draw_time_mode_s(all_results)
+
+
+    spiral_level = draw_level_hit_rate()
+    
 
 
 if __name__ == "__main__":
     main()
+
