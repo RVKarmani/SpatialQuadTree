@@ -25,7 +25,7 @@ parser.add_argument('-xh', help="x high coordinate for boundary", type=int, defa
 parser.add_argument('-yh', help="y high coordinate for boundary", type=int, default=900)
 parser.add_argument('-n', help="Number of queries", type=int, default=1000000)
 parser.add_argument('-s', help="Sortedness for inserts", type=float, default=0.5)
-parser.add_argument('-c', help="Curve type for data", type=str, choices=CURVE_CHOICES, default=BEZIER)
+parser.add_argument('-c', help="Curve type for data", type=str, choices=CURVE_CHOICES, default=RND_CRV)
 # parser.add_argument('-d', help="Distribution type for data", type=str, choices=DIST_CHOICES, default=CLUSTERED_DIST)
 
 args = parser.parse_args()
@@ -87,7 +87,6 @@ def generate_bezier_curve():
         curve_points.put((x, y))
     return curve_points
 
-
 def generate_fermat_spiral():
     curve_points = Queue(maxsize=NUM_SORTED)
     for i in range(NUM_SORTED):
@@ -109,8 +108,8 @@ def generate_random_curve():
     d = np.random.uniform(0.5, 2.0)  # frequency of the cosine function
 
     # Calculate x and y coordinates
-    x = X_LOW + (X_HIGH - X_LOW) * (a * np.sin(c * theta) - np.sin(c * np.pi / 2)) / (2 - np.sin(c * np.pi / 2))
-    y = Y_LOW + (Y_HIGH - Y_LOW) * (b * np.cos(d * theta) - np.cos(d * np.pi / 2)) / (2 - np.cos(d * np.pi / 2))
+    x = X_LOW + (X_HIGH - X_LOW) * ((a * np.sin(c * theta)) / (2 * a))
+    y = Y_LOW + (Y_HIGH - Y_LOW) * ((b * np.cos(d * theta)) / (2 * b))
 
     # Add coordinates to the queue
     return zipper(x, y, NUM_SORTED)
