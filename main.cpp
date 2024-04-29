@@ -63,7 +63,7 @@ int main(int argc, char **argv){
     // =============================================
     // Gaurantee that there are no other tasks in query
 
-    if (mode == '0' || mode == '1') {
+    if (mode == '0' || mode == '1' || mode == '2') {
         const bool ONLY_INSERT_STRICT = false;
         // true: raise error if existing other types
         // false: remove other types
@@ -124,6 +124,27 @@ int main(int argc, char **argv){
         cout << "Bulk Insert time: " << bulkInsertLog["time"] << endl;
         tree->getStatistics();
     }
+
+    else if (mode == '2')
+    {
+        // bulk insert
+
+        map<string, double> bulkInsertLog;
+        int level = 0;
+       
+        startTime = high_resolution_clock::now();
+        
+        if (argc >= 6)
+            level = argv[5][0] - '0';
+            cout<<"Level of Parent stored: " << level <<endl;
+        
+        tree->bulkInsert(queries, bulkInsertLog, 2 , level);
+
+        bulkInsertLog["time"] = duration_cast<microseconds>(high_resolution_clock::now() - startTime).count();
+        cout << "Bulk Insert (cache) time: " << bulkInsertLog["time"] << endl;
+        tree->getStatistics();
+    }
+
 
     else if (mode == 'n') {
         // normal
