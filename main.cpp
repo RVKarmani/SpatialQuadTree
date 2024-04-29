@@ -45,7 +45,7 @@ int main(int argc, char **argv){
     // QuadTreeNode* tree = new QuadTreeNode(boundary, 0);
     tree->packing(dataset);
     double time = duration_cast<microseconds>(high_resolution_clock::now() - startTime).count();
-    cout << "Index creation time: " << time << endl;
+    cout << "\"Index creation time\": " << time << ",\n";
 
     // Start tasks based on mode
     char mode; 
@@ -58,7 +58,7 @@ int main(int argc, char **argv){
         mode = argv[4][0];
     }
 
-    std::cout << "Mode: " << mode << "\n";
+    std::cout << "\"Mode\": " << mode << ",\n";
 
     // =============================================
     // Gaurantee that there are no other tasks in query
@@ -101,7 +101,7 @@ int main(int argc, char **argv){
         tree->bulkInsert(queries, naiveInsertLog, 0);
 
         naiveInsertLog["time"] = duration_cast<microseconds>(high_resolution_clock::now() - startTime).count();
-        cout << "Naive Insert time: " << naiveInsertLog["time"] << endl;
+        cout << "\"Naive Insert time\": " << naiveInsertLog["time"] << ",\n";
         tree->getStatistics();
     }
 
@@ -116,12 +116,12 @@ int main(int argc, char **argv){
         
         if (argc >= 6)
             level = argv[5][0] - '0';
-            cout<<"Level of Parent stored: " << level <<endl;
+            cout << "\"Level of Parent stored\": " << level << ",\n";
         
         tree->bulkInsert(queries, bulkInsertLog, 1 , level);
 
         bulkInsertLog["time"] = duration_cast<microseconds>(high_resolution_clock::now() - startTime).count();
-        cout << "Bulk Insert time: " << bulkInsertLog["time"] << endl;
+        cout << "\"Bulk Insert time\": " << bulkInsertLog["time"] << ",\n";
         tree->getStatistics();
     }
 
@@ -136,12 +136,12 @@ int main(int argc, char **argv){
         
         if (argc >= 6)
             level = argv[5][0] - '0';
-            cout<<"Level of Parent stored: " << level <<endl;
+            cout<<"\"Level of Parent stored\": " << level << ",\n";
         
         tree->bulkInsert(queries, bulkInsertLog, 2 , level);
 
         bulkInsertLog["time"] = duration_cast<microseconds>(high_resolution_clock::now() - startTime).count();
-        cout << "Bulk Insert (cache) time: " << bulkInsertLog["time"] << endl;
+        cout << "\"Bulk Insert (cache) time\": " << bulkInsertLog["time"] << ",\n";
         tree->getStatistics();
     }
 
