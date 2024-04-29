@@ -534,7 +534,7 @@ void QuadTree::bulkInsert(Input queries, map<string, double> &log, int method, i
     if (method == 1 || method == 2) {
         cout << "\"Total inserts\": " << total_num << ",\n";
         cout << "\"Miss inserts\": " << miss_num << ", \n";
-        cout << "\"Hit rate\": " << (total_num - miss_num) / total_num << ",\n";
+        cout << "\"Hit rate\": " << float(total_num - miss_num) / total_num << ",\n";
     }
 }
 

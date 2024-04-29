@@ -18,13 +18,14 @@ int main(int argc, char **argv){
     5: level:[0, 1, 2, 3, 4] level of parent when using optimized bulk insert
     */
 
-    std::cout << "===============================" << std::endl;
-    std::cout << "Command line arguments are:" << std::endl;
-    // Start from argv[1] because argv[0] is the program name
-    for (int i = 1; i < argc; i++) {
-        std::cout << "Argument " << i << ": " << argv[i] << std::endl;
-    }
-    std::cout << "===============================" << std::endl;
+    // std::cout << "===============================" << std::endl;
+    // std::cout << "Command line arguments are:" << std::endl;
+    // // Start from argv[1] because argv[0] is the program name
+    // for (int i = 1; i < argc; i++) {
+    //     std::cout << "Argument " << i << ": " << argv[i] << std::endl;
+    // }
+    // std::cout << "===============================" << std::endl;
+    std::cout << "{" << std::endl;
 
     if (argc != 4 && argc != 5 && argc != 6) {
         cout << "Usage: ./quadTree dataFile limit queryFile" << endl;
@@ -227,8 +228,9 @@ int main(int argc, char **argv){
         return 2;
     }
 
-    tree->exportTree("tree/tree.csv");
+    // tree->exportTree("tree/tree.csv");
    
+    std::cout << "}," << std::endl;
     return 0;
 }
 
