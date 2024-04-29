@@ -349,28 +349,53 @@ void QuadTreeNode::deleteTree() {
     delete this;
 }
 
+// void QuadTreeNode::getStatistics() {
+//     int size = 0, height = 0, pages = 0, directories = 0, dataPoints = 0, pointers = 0;
+//     calculateSize(size);
+//     getTreeHeight(height);
+//     count(pages, directories, dataPoints, pointers);
+//     if (POINT_SPLIT)
+//         cout << "Strategy: Optimized Point-Quad-Tree" << endl;
+//     else
+//         cout << "Strategy: Point-Region-Quad-Tree" << endl;
+//     cout << "Capacity: " << CAPACITY << endl;
+//     cout << "Size in MB: " << size / float(1e6) << endl;
+//     cout << "Height: " << height << endl;
+//     cout << "Pages: " << pages << endl;
+//     cout << "Directories: " << directories << endl;
+//     cout << "Data points: " << dataPoints << endl;
+//     cout << "Internal pointers: " << pointers << endl;
+//     // snapshot();
+// }
+
 void QuadTreeNode::getStatistics() {
     int size = 0, height = 0, pages = 0, directories = 0, dataPoints = 0, pointers = 0;
     calculateSize(size);
     getTreeHeight(height);
     count(pages, directories, dataPoints, pointers);
-    if (POINT_SPLIT)
-        cout << "Strategy: Optimized Point-Quad-Tree" << endl;
-    else
-        cout << "Strategy: Point-Region-Quad-Tree" << endl;
-    cout << "Capacity: " << CAPACITY << endl;
-    cout << "Size in MB: " << size / float(1e6) << endl;
-    cout << "Height: " << height << endl;
-    cout << "Pages: " << pages << endl;
-    cout << "Directories: " << directories << endl;
-    cout << "Data points: " << dataPoints << endl;
-    cout << "Internal pointers: " << pointers << endl;
+
+    string strategy = POINT_SPLIT ? "Optimized Point-Quad-Tree" : "Point-Region-Quad-Tree";
+
+    // cout << "{\n";
+    cout << "  \"strategy\": \"" << strategy << "\",\n";
+    cout << "  \"capacity\": " << CAPACITY << ",\n";
+    cout << "  \"sizeInMB\": " << size / float(1e6) << ",\n";
+    cout << "  \"height\": " << height << ",\n";
+    cout << "  \"pages\": " << pages << ",\n";
+    cout << "  \"directories\": " << directories << ",\n";
+    cout << "  \"dataPoints\": " << dataPoints << ",\n";
+    cout << "  \"internalPointers\": " << pointers << "\n";
+    // cout << "}\n";
     // snapshot();
 }
 
 QuadTreeNode::~QuadTreeNode() {}
 
 void QuadTree::bulkInsert(Input queries, map<string, double> &log, int method, int level) {
+
+    int total_num = 0;
+    int miss_num = 0;
+
     if (method == 0) { // naive
         for (auto q : queries)
         {
@@ -380,8 +405,8 @@ void QuadTree::bulkInsert(Input queries, map<string, double> &log, int method, i
     else if (method == 1) { // try last leaf first, if fail insert from root
         if (level == 0) {
             QuadTreeNode* last_leaf = this->root;
-            int total_num = 0;
-            int miss_num = 0;
+            // int total_num = 0;
+            // int miss_num = 0;
             for (auto q : queries) {
                 total_num++;
                 last_leaf = last_leaf->insert(q);
@@ -390,12 +415,12 @@ void QuadTree::bulkInsert(Input queries, map<string, double> &log, int method, i
                     miss_num++;
                 }
             }
-            cout<<"Total inserts: "<<total_num<<" Miss inserts: "<<miss_num<<endl;
+            // cout<<"Total inserts: "<<total_num<<" Miss inserts: "<<miss_num<<endl;
         }
         else {
             QuadTreeNode *last_parent = this->root;
-            int total_num = 0;
-            int miss_num = 0;
+            // int total_num = 0;
+            // int miss_num = 0;
             queue<QuadTreeNode *> parentQueue({this->root});
             for (auto q : queries)
             {
@@ -409,7 +434,7 @@ void QuadTree::bulkInsert(Input queries, map<string, double> &log, int method, i
                     miss_num++;
                 }
             }
-            cout << "Total inserts: " << total_num << " Miss inserts: " << miss_num << endl;
+            // cout << "Total inserts: " << total_num << " Miss inserts: " << miss_num << endl;
         }
     }
     else if (method == 2) {
@@ -421,8 +446,8 @@ void QuadTree::bulkInsert(Input queries, map<string, double> &log, int method, i
 
         if (level == 0) {
             QuadTreeNode* leaf;
-            int total_num = 0;
-            int miss_num = 0;
+            // int total_num = 0;
+            // int miss_num = 0;
             for (auto q : queries) {
                 total_num++;
 
@@ -451,14 +476,14 @@ void QuadTree::bulkInsert(Input queries, map<string, double> &log, int method, i
                     }
                 }
             }
-            cout<<"Total inserts: "<<total_num<<" Miss inserts: "<<miss_num<<endl;
+            // cout<<"Total inserts: "<<total_num<<" Miss inserts: "<<miss_num<<endl;
         }
         else {
 
             QuadTreeNode *leaf;
             QuadTreeNode *parent;
-            int total_num = 0;
-            int miss_num = 0;
+            // int total_num = 0;
+            // int miss_num = 0;
             queue<QuadTreeNode *> parentQueue({this->root});  // used to find parent
 
             for (auto q : queries)
@@ -495,7 +520,7 @@ void QuadTree::bulkInsert(Input queries, map<string, double> &log, int method, i
                     }
                 }
             }
-            cout << "Total inserts: " << total_num << " Miss inserts: " << miss_num << endl;
+            // cout << "Total inserts: " << total_num << " Miss inserts: " << miss_num << endl;
         }
 
     }
@@ -504,6 +529,12 @@ void QuadTree::bulkInsert(Input queries, map<string, double> &log, int method, i
         {
             this->root->insert(q);
         }
+    }
+
+    if (method == 1 || method == 2) {
+        cout << "\"Total inserts\": " << total_num << ",\n";
+        cout << "\"Miss inserts\": " << miss_num << ", \n";
+        cout << "\"Hit rate\": " << (total_num - miss_num) / total_num << ",\n";
     }
 }
 

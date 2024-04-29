@@ -25,13 +25,8 @@ parser.add_argument('-xh', help="x high coordinate for boundary", type=int, defa
 parser.add_argument('-yh', help="y high coordinate for boundary", type=int, default=900)
 parser.add_argument('-n', help="Number of queries", type=int, default=1000000)
 parser.add_argument('-s', help="Sortedness for inserts", type=float, default=0.5)
-<<<<<<< HEAD
-parser.add_argument('-c', help="Curve type for data", type=str, choices=CURVE_CHOICES, default=BEZIER)
-parser.add_argument('-d', help="Distribution type for data", type=str, choices=DIST_CHOICES)
-=======
 parser.add_argument('-c', help="Curve type for data", type=str, choices=CURVE_CHOICES, default=RND_CRV)
-# parser.add_argument('-d', help="Distribution type for data", type=str, choices=DIST_CHOICES, default=CLUSTERED_DIST)
->>>>>>> 89b314dd0adc9fa46924507457496e6d99593ecc
+parser.add_argument('-d', help="Distribution type for data", type=str, choices=DIST_CHOICES, default=CLUSTERED_DIST)
 
 args = parser.parse_args()
 
@@ -173,7 +168,6 @@ def get_curve_points(curve_type:str):
 
 # Main start
 print_parameters()
-<<<<<<< HEAD
 
 if args.d:
     curve_points = generate_distribution_points(args.d)
@@ -181,8 +175,4 @@ if args.d:
 else:
     curve_points = get_curve_points(args.c)
     plot_points(curve_points, args.c)
-=======
-curve_points = get_curve_points(args.c)
-# plot_points(curve_points, args.c)
->>>>>>> 89b314dd0adc9fa46924507457496e6d99593ecc
 write_points_to_query_file(curve_points)
