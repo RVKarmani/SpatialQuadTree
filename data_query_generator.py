@@ -74,7 +74,8 @@ def cubic_bezier(t, p0, p1, p2, p3):
     return (1-t)**3 * p0 + 3*(1-t)**2*t * p1 + 3*(1-t)*t**2 * p2 + t**3 * p3
 
 def generate_bezier_curve():
-    curve_points = Queue(maxsize=NUM_SORTED)
+    x_points = []
+    y_points = []
     t_values = np.linspace(0, 1, NUM_SORTED)
 
     p0 = np.array([X_LOW, Y_LOW])
@@ -84,35 +85,41 @@ def generate_bezier_curve():
 
     for t in t_values:
         x, y = cubic_bezier(t, p0, p1, p2, p3)
-        curve_points.put((x, y))
-    return curve_points
+        x_points.append(x)
+        y_points.append(y)
+    return x_points, y_points
 
 def generate_fermat_spiral():
-    curve_points = Queue(maxsize=NUM_SORTED)
+    x_points = []
+    y_points = []
     for i in range(NUM_SORTED):
         theta = 0.1 * i
         r = np.sqrt(theta)
         x = r * np.cos(theta)
         y = r * np.sin(theta)
-        curve_points.put((x, y))
-    return curve_points
+        x_points.append(x)
+        y_points.append(y)
+    return x, y
 
 def generate_random_curve():
     # Generate theta values
     theta = np.linspace(0, 4 * np.pi, NUM_SORTED)
 
     # Define parameters for randomness
-    a = np.random.uniform(0.5, 2.0)  # amplitude of the sine function
-    b = np.random.uniform(0.5, 2.0)  # amplitude of the cosine function
-    c = np.random.uniform(0.5, 2.0)  # frequency of the sine function
-    d = np.random.uniform(0.5, 2.0)  # frequency of the cosine function
+    # a = np.random.uniform(0.5, 2.0)  # amplitude of the sine function
+    # b = np.random.uniform(0.5, 2.0)  # amplitude of the cosine function
+    # c = np.random.uniform(0.5, 2.0)  # frequency of the sine function
+    # d = np.random.uniform(0.5, 2.0)  # frequency of the cosine function
 
+    c = 1
+    d = 0.9
     # Calculate x and y coordinates
-    x = X_LOW + (X_HIGH - X_LOW) * ((a * np.sin(c * theta)) / (2 * a))
-    y = Y_LOW + (Y_HIGH - Y_LOW) * ((b * np.cos(d * theta)) / (2 * b))
+    x = X_LOW + (X_HIGH - X_LOW) * ((np.sin(c * theta) + 1) / 2)
+    y = Y_LOW + (Y_HIGH - Y_LOW) * ((np.cos(d * theta) + 1) / 2)
+
 
     # Add coordinates to the queue
-    return zipper(x, y, NUM_SORTED)
+    return x, y
 
 def generate_circular_arc():
     theta = np.linspace(0, np.pi, NUM_SORTED)
@@ -120,29 +127,21 @@ def generate_circular_arc():
     x = X_LOW + r * np.cos(theta)
     y = Y_LOW + r * np.sin(theta)
     
-    return zipper(x, y, NUM_SORTED)
+    return x, y
 
-def write_points_to_query_file(curve_points): 
-    index = 1
+def write_points_to_query_file(x, y): 
     with open(QUERY_FILE, 'w') as query_file: #, open(DATA_FILE, 'w') as data_file:
-        total_num = 0
-        # for _ in tqdm(range(NUM_QUERIES)):
-        for _ in (range(NUM_QUERIES)):
+        for _ in tqdm(range(NUM_QUERIES)):
+        # for _ in (range(NUM_QUERIES)):
+            index = 0
             choice = random.random()
             if choice > args.s: # generate randomly
                 query_file.write("{} {} {}\n".format(INSERT_SYMBOL, random.uniform(X_LOW, X_HIGH), random.uniform(Y_LOW, Y_HIGH)))
-
-                # data_file.write("{} {} {}\n".format(index, random.uniform(X_LOW, X_HIGH), random.uniform(Y_LOW, Y_HIGH)))
-                # index = index + 1
             else: # get point on the curve
-                sorted_coord = curve_points.get()
-                query_file.write("{} {} {}\n".format(INSERT_SYMBOL, sorted_coord[0], sorted_coord[1]))
-                
-                # data_file.write("{} {} {}\n".format(index, sorted_coord[0], sorted_coord[1]))
-                # index = index + 1
+                query_file.write("{} {} {}\n".format(INSERT_SYMBOL, x[index], y[index]))
+                index = index + 1
 
-def plot_points(curve_points:list, curve_type:str):
-    curve_x, curve_y = zip(*list(curve_points.queue))
+def plot_points(curve_x, curve_y, curve_type:str):
     # Plotting
     # plt.plot(*zip(p0, c0, c1, p1), 'ro-')  # Plot control points and endpoints
     plt.plot(curve_x, curve_y, label='Curve Plot')
@@ -168,6 +167,6 @@ def get_curve_points(curve_type:str):
 
 # Main start
 print_parameters()
-curve_points = get_curve_points(args.c)
-# plot_points(curve_points, args.c)
-write_points_to_query_file(curve_points)
+x, y = get_curve_points(args.c)
+plot_points(x, y, args.c)
+write_points_to_query_file(x, y)
