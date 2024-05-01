@@ -3,11 +3,11 @@ import numpy as np
 import random, argparse
 import quads
 
-tree = quads.QuadTree(
-    (0, 0),  # The center point
-    4000,  # The width
-    2000,  # The height
-)
+# tree = quads.QuadTree(
+#     (0, 0),  # The center point
+#     4000,  # The width
+#     2000,  # The height
+# )
 
 # Curves
 BEZIER = "bezier"
@@ -61,7 +61,7 @@ NUM_SORTED = int(args.s * NUM_QUERIES)
 NUM_RANDOM = int(NUM_QUERIES - NUM_SORTED)
 INSERT_SYMBOL = "i"
 
-QUERY_FILE = f"final_data/insert_s={args.s}_curve={args.c}_dist={args.d}.txt"
+QUERY_FILE = f"final_data/insert_n={args.n}_s={args.s}_curve={args.c}_dist={args.d}.txt"
 
 
 # Functions
@@ -110,14 +110,14 @@ def generate_bezier_curve():
                 dist_y.append(yr)
                 index = index + 1
 
-                tree.insert((xr, yr), data="red")
+                # tree.insert((xr, yr), data="red")
                 query_file.write("{} {} {}\n".format(INSERT_SYMBOL, xr, yr))
             else:  # get point on the curve
                 curve_x.append(x)
                 curve_y.append(y)
                 index = index + 1
 
-                tree.insert((x, y), data="green")
+                # tree.insert((x, y), data="green")
                 query_file.write("{} {} {}\n".format(INSERT_SYMBOL, x, y))
 
     return curve_x, curve_y, dist_x, dist_y
@@ -220,13 +220,13 @@ print_parameters()
 curve_x, curve_y, dist_x, dist_y = get_curve_points(args.c)
 
 # Plot points
-plt.scatter(curve_x, curve_y, color="green")
-plt.scatter(dist_x, dist_y, color="red")
-plt.xlabel("X")
-plt.ylabel("Y")
-plt.legend()
-plt.grid(True)
-plt.axis("equal")
-plt.show()
+# plt.scatter(curve_x, curve_y, color="green")
+# plt.scatter(dist_x, dist_y, color="red")
+# plt.xlabel("X")
+# plt.ylabel("Y")
+# plt.legend()
+# plt.grid(True)
+# plt.axis("equal")
+# plt.show()
 
 # quads.visualize(tree)
