@@ -18,13 +18,14 @@ int main(int argc, char **argv){
     5: level:[0, 1, 2, 3, 4] level of parent when using optimized bulk insert
     */
 
-    std::cout << "===============================" << std::endl;
-    std::cout << "Command line arguments are:" << std::endl;
-    // Start from argv[1] because argv[0] is the program name
-    for (int i = 1; i < argc; i++) {
-        std::cout << "Argument " << i << ": " << argv[i] << std::endl;
-    }
-    std::cout << "===============================" << std::endl;
+    // std::cout << "===============================" << std::endl;
+    // std::cout << "Command line arguments are:" << std::endl;
+    // // Start from argv[1] because argv[0] is the program name
+    // for (int i = 1; i < argc; i++) {
+    //     std::cout << "Argument " << i << ": " << argv[i] << std::endl;
+    // }
+    // std::cout << "===============================" << std::endl;
+    std::cout << "{" << std::endl;
 
     if (argc != 4 && argc != 5 && argc != 6) {
         cout << "Usage: ./quadTree dataFile limit queryFile" << endl;
@@ -34,7 +35,7 @@ int main(int argc, char **argv){
     // Loading ...
 	int limit = atoi(argv[2]);
 
-    vector<float> boundary = {-180.0, -90.0, 180.0, 90.0};
+    vector<float> boundary = {-1800.0, -900.0, 1800.0, 900.0};
 
     Input dataset, queries;
     dataset.loadData(argv[1], limit);
@@ -45,7 +46,7 @@ int main(int argc, char **argv){
     // QuadTreeNode* tree = new QuadTreeNode(boundary, 0);
     tree->packing(dataset);
     double time = duration_cast<microseconds>(high_resolution_clock::now() - startTime).count();
-    cout << "Index creation time: " << time << endl;
+    cout << "\"Index creation time\": " << time << ",\n";
 
     // Start tasks based on mode
     char mode; 
@@ -58,12 +59,12 @@ int main(int argc, char **argv){
         mode = argv[4][0];
     }
 
-    std::cout << "Mode: " << mode << "\n";
+    std::cout << "\"Mode\": " << mode << ",\n";
 
     // =============================================
     // Gaurantee that there are no other tasks in query
 
-    if (mode == '0' || mode == '1') {
+    if (mode == '0' || mode == '1' || mode == '2') {
         const bool ONLY_INSERT_STRICT = false;
         // true: raise error if existing other types
         // false: remove other types
@@ -101,7 +102,7 @@ int main(int argc, char **argv){
         tree->bulkInsert(queries, naiveInsertLog, 0);
 
         naiveInsertLog["time"] = duration_cast<microseconds>(high_resolution_clock::now() - startTime).count();
-        cout << "Naive Insert time: " << naiveInsertLog["time"] << endl;
+        cout << "\"Naive Insert time\": " << naiveInsertLog["time"] << ",\n";
         tree->getStatistics();
     }
 
@@ -116,14 +117,35 @@ int main(int argc, char **argv){
         
         if (argc >= 6)
             level = argv[5][0] - '0';
-            cout<<"Level of Parent stored: " << level <<endl;
+            cout << "\"Level of Parent stored\": " << level << ",\n";
         
         tree->bulkInsert(queries, bulkInsertLog, 1 , level);
 
         bulkInsertLog["time"] = duration_cast<microseconds>(high_resolution_clock::now() - startTime).count();
-        cout << "Bulk Insert time: " << bulkInsertLog["time"] << endl;
+        cout << "\"Bulk Insert time\": " << bulkInsertLog["time"] << ",\n";
         tree->getStatistics();
     }
+
+    else if (mode == '2')
+    {
+        // bulk insert
+
+        map<string, double> bulkInsertLog;
+        int level = 0;
+       
+        startTime = high_resolution_clock::now();
+        
+        if (argc >= 6)
+            level = argv[5][0] - '0';
+            cout<<"\"Level of Parent stored\": " << level << ",\n";
+        
+        tree->bulkInsert(queries, bulkInsertLog, 2 , level);
+
+        bulkInsertLog["time"] = duration_cast<microseconds>(high_resolution_clock::now() - startTime).count();
+        cout << "\"Bulk Insert (cache) time\": " << bulkInsertLog["time"] << ",\n";
+        tree->getStatistics();
+    }
+
 
     else if (mode == 'n') {
         // normal
@@ -206,8 +228,9 @@ int main(int argc, char **argv){
         return 2;
     }
 
-    tree->exportTree("tree/tree.csv");
+    // tree->exportTree("tree/tree.csv");
    
+    std::cout << "}," << std::endl;
     return 0;
 }
 
