@@ -41,7 +41,7 @@ parser.add_argument(
     help="Distribution type for data",
     type=str,
     choices=DIST_CHOICES,
-    default=UNIFORM_DIST,
+    default=GAUSSIAN_DIST,
 )
 parser.add_argument(
     "-m", help="Standard deviation for distribution", type=int, default=50
@@ -61,9 +61,7 @@ NUM_SORTED = int(args.s * NUM_QUERIES)
 NUM_RANDOM = int(NUM_QUERIES - NUM_SORTED)
 INSERT_SYMBOL = "i"
 
-QUERY_FILE = "final_data/insert_s={selectivity}_{suffix}.txt".format(
-    selectivity=args.s, suffix=f"curve={args.c}" if args.c else f"dist={args.d}"
-)
+QUERY_FILE = f"final_data/insert_s={args.s}_curve={args.c}_dist={args.d}.txt"
 
 
 # Functions
