@@ -10,17 +10,15 @@ import re
 
 def get_s_list(file_path):
 
-    # if "bezier" in file_path:
-    #     suffix = "bezier"
-    # elif "spiral" in file_path:
-    #     suffix = "fermat_spiral"
-    # else:
-    #     raise
+    if "bezier" in file_path:
+        suffix = "bezier"
+    elif "spiral" in file_path:
+        suffix = "fermat_spiral"
+    else:
+        raise
 
     # Compile a regular expression to capture the 's' value from each command line
-    # s_value_pattern = re.compile(rf'insert_s=(\d+\.\d+)_curve={suffix}.txt')
-    # s_value_pattern = re.compile(rf'_s=(\d+\.\d+)_curve.txt')
-    s_value_pattern = re.compile(r's=(\d+\.\d+)_')
+    s_value_pattern = re.compile(rf'insert_s=(\d+\.\d+)_curve={suffix}.txt')
 
     # List to store the extracted 's' values
     extracted_s_values = []
@@ -36,7 +34,6 @@ def get_s_list(file_path):
 
     # Print all the extracted 's' values
     print(extracted_s_values)
-    # quit()
     return extracted_s_values
 
 
@@ -96,8 +93,7 @@ def draw_time_mode_s(all_results):
     num_rows = len(all_results)
     
     # Create a large figure to accommodate all subplots
-    # fig, axes = plt.subplots(num_rows, 3, figsize=(15, 5 * num_rows))
-    fig, axes = plt.subplots(3, num_rows, figsize=(5, 10))
+    fig, axes = plt.subplots(num_rows, 3, figsize=(20, 5 * num_rows))
     
     # Iterate through each set of results
     for idx, (graph_name, results) in enumerate(all_results.items()):
@@ -154,10 +150,9 @@ def draw_time_mode_s(all_results):
 
     # Adjust layout and display the plot
     plt.tight_layout()
-    plt.show()
-    # quit()
+    # plt.show()
     graph_names = list(all_results.keys())
-    # plt.savefig(f"images/results_time_hitRate_height__{graph_names}.png")
+    plt.savefig(f"images/results_time_hitRate_height__{graph_names}.png")
 
 
 def draw_level_hit_rate(graph="level_spiral"):
@@ -194,8 +189,7 @@ def draw_level_hit_rate(graph="level_spiral"):
 
 def main():
         
-    graph_names = ["gaussian"]
-    # graph_names = ["bezier", "spiral"]
+    graph_names = ["bezier", "spiral"]
     # graph_names = ["bezier"]
     all_results = {graph_name: get_results(graph_name) for graph_name in graph_names}
 
