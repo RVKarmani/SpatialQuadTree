@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import random, argparse
-import quads
+# import quads
 
 # tree = quads.QuadTree(
 #     (0, 0),  # The center point
@@ -183,8 +183,8 @@ def generate_random_curve():
     x = X_LOW + (X_HIGH - X_LOW) * ((np.sin(c * theta) + 1) / 2)
     y = Y_LOW + (Y_HIGH - Y_LOW) * ((np.cos(d * theta) + 1) / 2)
 
-    for xl, yl in zip(x, y):
-        tree.insert((xl, yl), data="green")
+    # for xl, yl in zip(x, y):
+    #     tree.insert((xl, yl), data="green")
 
     # Add coordinates to the queue
     return x, y
@@ -195,8 +195,8 @@ def generate_circular_arc():
     r = np.sqrt((X_HIGH - X_LOW) ** 2 + (Y_HIGH - Y_LOW) ** 2) / 2
     x = X_LOW + r * np.cos(theta)
     y = Y_LOW + r * np.sin(theta)
-    for xl, yl in zip(x, y):
-        tree.insert((xl, yl), data="green")
+    # for xl, yl in zip(x, y):
+    #     tree.insert((xl, yl), data="green")
 
     return x, y
 

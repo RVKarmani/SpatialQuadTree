@@ -35,7 +35,7 @@ int main(int argc, char **argv){
     // Loading ...
 	int limit = atoi(argv[2]);
 
-    vector<float> boundary = {-1800.0, -900.0, 1800.0, 900.0};
+    vector<float> boundary = {-2500.0, -1300.0, 2500.0, 1300.0};
 
     Input dataset, queries;
     dataset.loadData(argv[1], limit);
