@@ -93,7 +93,7 @@ def draw_time_mode_s(all_results):
     num_rows = len(all_results)
     
     # Create a large figure to accommodate all subplots
-    fig, axes = plt.subplots(num_rows, 3, figsize=(16, 10 * num_rows))
+    fig, axes = plt.subplots(num_rows, 3, figsize=(20, 5 * num_rows))
     
     # Iterate through each set of results
     for idx, (graph_name, results) in enumerate(all_results.items()):
@@ -187,18 +187,16 @@ def draw_level_hit_rate(graph="level_spiral"):
     plt.show()
         
 
-
-
 def main():
         
-    # # graph_names = ["bezier", "spiral"]
+    graph_names = ["bezier", "spiral"]
     # graph_names = ["bezier"]
-    # all_results = {graph_name: get_results(graph_name) for graph_name in graph_names}
+    all_results = {graph_name: get_results(graph_name) for graph_name in graph_names}
 
-    # draw_time_mode_s(all_results)
+    draw_time_mode_s(all_results)
 
 
-    spiral_level = draw_level_hit_rate()
+    # spiral_level = draw_level_hit_rate()
     
 
 

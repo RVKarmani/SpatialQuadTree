@@ -32,7 +32,7 @@ for line in lines:
 
 # Create the plot
 plt.figure(figsize=(8, 6))  # Adjust figure size as desired
-plt.scatter(x, y, s=1, marker='.')
+plt.scatter(x, y, s=0.01, marker='.')
 plt.xlabel("X-Coordinate")
 plt.ylabel("Y-Coordinate")
 plt.title(title)
